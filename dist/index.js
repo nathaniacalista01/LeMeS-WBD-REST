@@ -9,5 +9,5 @@ app.get("/", (req, res) => {
     res.send("Testing");
 });
 app.listen(3000, () => {
-    console.log("App is listening");
+    console.log("App is testing");
 });
