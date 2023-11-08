@@ -4,7 +4,7 @@ services:
     image: rest
     container_name: rest
     ports:
-      - "8000:8000"
+      - "3000:3000"
     volumes:
       - ./:/app
       - /app/node_modules
@@ -18,7 +18,7 @@ services:
     container_name: rest-db
     hostname: rest-db
     ports:
-      - "5432:5432"
+      - "5433:5432"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}

@@ -1,11 +1,13 @@
 import express, {Express} from "express"
 import cors from "cors"
+import router from "./routes/route";
 
 class App{
     private server : Express;
     constructor(){
         this.server = express();
-        this.server.use(cors(),express.json());
+        this.server.use(express.json());
+        this.server.use("/api",router);
     }
     public run(){
         this.server.listen(3000,()=>{
