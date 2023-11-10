@@ -9,6 +9,7 @@ RUN yarn install
 COPY . .
 RUN yarn build
 RUN yarn global add pm2
-EXPOSE 8080
+EXPOSE 3000
+# RUN npx prisma migrate dev
 # CMD ["pm2-runtime", "dist/index.js"]
 CMD ["yarn","dev"];

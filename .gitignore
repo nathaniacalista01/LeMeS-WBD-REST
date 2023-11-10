@@ -1,4 +1,4 @@
 node_modules
-postgresql
+.postgresql-data
 yarn-error.log
 .env
