@@ -1,10 +1,4 @@
-import express, {Request,Response} from "express"
+import App from "./app";
 
-const app = express();
-
-app.get("/",(req : Request, res : Response) =>{
-    res.send("Testing");
-})
-app.listen(3000,()=>{
-    console.log("App is listening");
-})
+const app = new App();
+app.run();

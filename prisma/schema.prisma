@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+enum Source {
+  PDF
+  VIDEO
+}
+
+model User{
+  id Int @id @default(autoincrement())
+  username String @unique
+  fullname String
+  isAdmin Boolean @default(false)
+  password String
+  image_path String?
+  created_on DateTime @default(now())
+  course CoursePremium[] @relation("CourseTeacher")
+}
+
+model CoursePremium {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  image_path String?
+  teacher_id Int
+  release_date DateTime @default(now())
+  teacher User @relation("CourseTeacher",fields: [teacher_id],references: [id])
+  modul ModulPremium[] @relation("CourseModul")
+}
+
+model ModulPremium {
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  course_id Int
+  material MaterialPremium[] @relation("ModulMaterial")
+  course CoursePremium @relation("CourseModul", fields: [course_id], references: [id])
+}
+
+model MaterialPremium{
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  source_type Source
+  material_path String
+  module_id Int
+  module ModulPremium @relation("ModulMaterial",fields: [module_id],references: [id])
+}
