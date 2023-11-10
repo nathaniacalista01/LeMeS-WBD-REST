@@ -20,7 +20,8 @@
   "scripts": {
     "build": "yarn tsc",
     "start": "node dist/index.js",
-    "dev": "concurrently \"yarn tsc --watch\" \"nodemon -q dist/index.js\" ",
+    "seed" : "yarn prisma db seed",
+    "dev": "yarn migrate:dev && yarn seed && concurrently \"yarn tsc --watch\" \"nodemon -q dist/index.js\" ",
     "migrate:dev": "yarn prisma migrate dev"
   },
   "devDependencies": {

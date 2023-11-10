@@ -10,8 +10,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.testing = exports.getUsers = void 0;
-const { PrismaClient } = require("@prisma/client");
-const prisma = new PrismaClient();
+const client_1 = require("@prisma/client");
+const prisma = new client_1.PrismaClient();
 const getUsers = () => __awaiter(void 0, void 0, void 0, function* () {
     const users = yield prisma.user.findMany();
     return users;
