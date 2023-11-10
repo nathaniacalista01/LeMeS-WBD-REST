@@ -11,4 +11,7 @@ RUN yarn build
 # RUN yarn global add pm2
 EXPOSE 3000
 # CMD ["pm2-runtime", "dist/index.js"]
+
+# Jalanin komen di bawah cuma pertama kali (gunanya buat seeding database)
+# CMD ["yarn","start:prod"]
 CMD ["yarn","dev"];
