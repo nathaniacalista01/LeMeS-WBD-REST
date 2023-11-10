@@ -14,17 +14,71 @@ const bcrypt = require("bcrypt");
 const prisma = new client_1.PrismaClient();
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
-        for (let i = 0; i < 30; i++) {
-            yield prisma.user.create({
-                data: {
-                    username: "username" + i,
-                    fullname: "username" + i,
-                    password: yield bcrypt.hash("password", 10),
-                },
-            });
+        try {
+            // Menjalankan seeding satu per satu
+            yield seedUser();
+            yield seedCourse();
+            yield seedModule();
+            yield seedMaterial();
+        }
+        catch (error) {
+            console.error(error);
+        }
+        finally {
+            // Disconnect dari Prisma setelah selesai
+            yield prisma.$disconnect();
         }
     });
 }
+const seedUser = () => __awaiter(void 0, void 0, void 0, function* () {
+    for (let i = 0; i < 30; i++) {
+        yield prisma.user.create({
+            data: {
+                username: "username " + i,
+                fullname: "fullname " + i,
+                password: yield bcrypt.hash("password", 10),
+            },
+        });
+    }
+});
+const seedCourse = () => __awaiter(void 0, void 0, void 0, function* () {
+    for (let i = 0; i < 30; i++) {
+        const randomTeacherId = Math.floor(Math.random() * 30);
+        yield prisma.coursePremium.create({
+            data: {
+                title: "title " + i,
+                description: "description " + i,
+                teacher_id: randomTeacherId,
+            },
+        });
+    }
+});
+const seedModule = () => __awaiter(void 0, void 0, void 0, function* () {
+    for (let i = 0; i < 30; i++) {
+        const randomCourseId = Math.floor(Math.random() * 30);
+        yield prisma.modulPremium.create({
+            data: {
+                title: "title " + i,
+                description: "description " + i,
+                course_id: randomCourseId,
+            },
+        });
+    }
+});
+const seedMaterial = () => __awaiter(void 0, void 0, void 0, function* () {
+    for (let i = 0; i < 30; i++) {
+        const randomModuleId = Math.floor(Math.random() * 30);
+        yield prisma.materialPremium.create({
+            data: {
+                title: "title " + i,
+                description: "description " + i,
+                source_type: "PDF",
+                material_path: "/",
+                module_id: randomModuleId,
+            },
+        });
+    }
+});
 main()
     .then(() => __awaiter(void 0, void 0, void 0, function* () {
     yield prisma.$disconnect();
