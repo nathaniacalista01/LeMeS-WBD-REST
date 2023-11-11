@@ -7,7 +7,6 @@ COPY prisma ./prisma/
 COPY .env .
 RUN yarn install
 COPY . .
-RUN yarn build
 # RUN yarn global add pm2
 EXPOSE 3000
 # CMD ["pm2-runtime", "dist/index.js"]
