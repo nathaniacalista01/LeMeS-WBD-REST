@@ -15,21 +15,50 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.PremiumService = void 0;
 const soap_caller_1 = __importDefault(require("../utils/soap-caller"));
 class PremiumService {
+    constructor() {
+        this.soap_caller = new soap_caller_1.default();
+    }
     getAllPremium() {
         return __awaiter(this, void 0, void 0, function* () {
-            const soap_url = process.env.SOAP_URL;
-            if (soap_url) {
-                const soap_caller = new soap_caller_1.default(soap_url);
-                const result = yield soap_caller.call("getAllPremium");
-                try {
-                    const response = yield JSON.parse(result["_text"]);
-                    const data = response["data"];
-                    return data;
+            // const soap_caller = new SoapCaller();
+            const result = yield this.soap_caller.call("getAllPremium");
+            try {
+                const response = yield JSON.parse(result["_text"]);
+                const data = response["data"];
+                return data;
+            }
+            catch (error) {
+                throw new Error(error.getMessage());
+            }
+        });
+    }
+    updatePremium(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.soap_caller.call("updatePremiumStatus", data);
+            console.log("Ini result", result);
+            try {
+                const response = result["_text"];
+                if (response !== "Error") {
+                    return "Sucess";
                 }
-                catch (error) {
-                    console.log("Masuk ke error handling ini");
-                    throw new Error(error.getMessage());
+            }
+            catch (error) {
+                throw new Error(error.getMessage());
+            }
+        });
+    }
+    deletePremium(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.soap_caller.call("deleteRequest", data);
+            console.log("Ini result ; ", result);
+            try {
+                const response = result["_text"];
+                if (response !== "Error") {
+                    return "Success";
                 }
+            }
+            catch (error) {
+                return "Error";
             }
         });
     }

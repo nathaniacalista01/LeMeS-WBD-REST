@@ -18,35 +18,86 @@ const premium_service_1 = require("../service/premium-service");
 exports.premiumRouter = express_1.default.Router();
 // Router used to get all upgrade premium request
 exports.premiumRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const soap_url = process.env.SOAP_URL;
     const premium_service = new premium_service_1.PremiumService();
-    if (soap_url) {
-        try {
-            const data = yield premium_service.getAllPremium();
-            if (!data) {
-                res.json({
-                    status: 400,
-                    message: "No premium found",
-                });
-            }
-            else {
-                res.json({
-                    status: 200,
-                    message: "Success",
-                    data,
-                });
-            }
-        }
-        catch (error) {
+    try {
+        const data = yield premium_service.getAllPremium();
+        if (!data) {
             res.json({
-                status: 500,
-                message: "Error"
+                status: 400,
+                message: "No premium found",
+            });
+        }
+        else {
+            res.json({
+                status: 200,
+                message: "Success",
+                data,
             });
         }
     }
-    else {
-        res.json("soap url not found");
+    catch (error) {
+        res.json({
+            status: 500,
+            message: "Error",
+        });
     }
 }));
-exports.premiumRouter.put("/:user_id", (req, res) => {
-});
+exports.premiumRouter.put("/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user_id } = req.params;
+    const { newStatus } = req.body;
+    const data = {
+        user_id: parseInt(user_id),
+        newStatus: newStatus,
+    };
+    const premium_service = new premium_service_1.PremiumService();
+    try {
+        const status = yield premium_service.updatePremium(data);
+        console.log("Ini status : ", status);
+        if (!status) {
+            res.json({
+                status: 400,
+                message: "User not found",
+            });
+        }
+        else {
+            res.json({
+                status: 200,
+                message: "User's premium status has been updated",
+            });
+        }
+    }
+    catch (error) {
+        res.json({
+            status: 500,
+            message: "Error",
+        });
+    }
+}));
+exports.premiumRouter.delete("/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { user_id } = req.params;
+    const data = {
+        user_id
+    };
+    const premium_service = new premium_service_1.PremiumService();
+    try {
+        const status = yield premium_service.deletePremium(data);
+        if (status) {
+            res.json({
+                status: 200,
+                message: "Successfully deleted a request"
+            });
+        }
+        else {
+            res.json({
+                status: 400,
+                message: "User not found"
+            });
+        }
+    }
+    catch (error) {
+        res.json({
+            status: 500,
+            message: "Internal server error"
+        });
+    }
+}));

@@ -14,8 +14,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const xml_js_1 = __importDefault(require("xml-js"));
 class SoapCaller {
-    constructor(url) {
-        this.url = url;
+    constructor() {
+        const url = process.env.SOAP_URL;
+        if (url) {
+            this.url = url;
+        }
+        else {
+            this.url = "http://host.docker.internal:8080/premium?wsdl";
+        }
     }
     call(method, params) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -23,14 +29,16 @@ class SoapCaller {
                 "Content-Type": "text/xml",
             };
             const xml = this.buildXMLRequest(method, params);
+            console.log("Ini xml request : ", xml);
             const response = yield fetch(this.url, {
                 headers: headers,
                 method: "POST",
                 body: xml,
             });
             const text = yield response.text();
+            console.log("Ini text : ", text);
             const result = this.parseXML(text, method);
-            return result + "asdasdsadas";
+            return result;
         });
     }
     buildXMLRequest(method, params) {
@@ -64,21 +72,6 @@ class SoapCaller {
             return null;
         }
         return returnVal;
-        // return this.buildResponseJSON(returnVal);
-    }
-    buildResponseJSON(json) {
-        if (Array.isArray(json)) {
-            return json.map((item) => this.flatten(item));
-        }
-        return this.flatten(json);
-    }
-    flatten(json) {
-        const response = {};
-        Object.keys(json).forEach((key) => {
-            const value = json[key];
-            response[key] = value["_text"];
-        });
-        return response;
     }
 }
 exports.default = SoapCaller;
