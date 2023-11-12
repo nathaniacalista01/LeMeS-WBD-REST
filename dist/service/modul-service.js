@@ -9,54 +9,51 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CourseService = void 0;
+exports.ModulService = void 0;
 const db_1 = require("../db/db");
-class CourseService {
+class ModulService {
     constructor() {
         const db = db_1.DB.getInstance();
         this.prisma = db.getPrisma();
     }
-    getAllCourse() {
+    getAllModuls() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const courses = yield this.prisma.coursePremium.findMany();
-                return courses;
+                const moduls = yield this.prisma.modulPremium.findMany();
+                return moduls;
             }
             catch (error) {
-                throw new Error("Error getting all courses");
+                throw new Error(error.message);
             }
         });
     }
-    addCourse(title, description, teacher_id, image_path) {
+    addModul(title, description, course_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.prisma.coursePremium.create({
+                const response = yield this.prisma.modulPremium.create({
                     data: {
                         title,
                         description,
-                        teacher_id,
-                        image_path,
+                        course_id,
                     },
                 });
                 return response;
             }
             catch (error) {
-                throw new Error("Error adding courses");
+                throw new Error("Error adding modul");
             }
         });
     }
-    editCourse(course_id, title, description, teacher_id, image_path) {
+    editModul(modul_id, title, description) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.prisma.coursePremium.update({
+                const response = yield this.prisma.modulPremium.update({
                     where: {
-                        id: course_id,
+                        id: modul_id,
                     },
                     data: {
                         title,
                         description,
-                        teacher_id,
-                        image_path,
                     },
                 });
                 return response;
@@ -67,12 +64,12 @@ class CourseService {
             }
         });
     }
-    deleteCourse(course_id) {
+    deleteModul(modul_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.prisma.coursePremium.delete({
+                const response = yield this.prisma.modulPremium.delete({
                     where: {
-                        id: course_id,
+                        id: modul_id,
                     },
                 });
                 return response;
@@ -83,12 +80,12 @@ class CourseService {
             }
         });
     }
-    getCourse(course_id) {
+    getModul(modul_id) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const response = yield this.prisma.coursePremium.findUnique({
+                const response = yield this.prisma.modulPremium.findUnique({
                     where: {
-                        id: course_id,
+                        id: modul_id,
                     },
                 });
                 return response;
@@ -99,4 +96,4 @@ class CourseService {
         });
     }
 }
-exports.CourseService = CourseService;
+exports.ModulService = ModulService;

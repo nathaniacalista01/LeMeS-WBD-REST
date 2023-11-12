@@ -6,7 +6,7 @@ class DB {
     constructor() {
         this.prisma = new client_1.PrismaClient();
     }
-    getInstance() {
+    static getInstance() {
         if (!DB.instance) {
             DB.instance = new DB();
         }

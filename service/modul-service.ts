@@ -1,59 +1,51 @@
 import { PrismaClient } from "@prisma/client";
 import { DB } from "../db/db";
 
-export class CourseService {
+export class ModulService {
   private prisma: PrismaClient;
-
   constructor() {
     const db: DB = DB.getInstance();
     this.prisma = db.getPrisma();
   }
-  public async getAllCourse() {
+  public async getAllModuls() {
     try {
-      const courses = await this.prisma.coursePremium.findMany();
-      return courses;
-    } catch (error) {
-      throw new Error("Error getting all courses");
+      const moduls = await this.prisma.modulPremium.findMany();
+      return moduls;
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
-
-  public async addCourse(
+  public async addModul(
     title: string,
     description: string,
-    teacher_id: number,
-    image_path?: string
+    course_id: number,
   ) {
     try {
-      const response = await this.prisma.coursePremium.create({
+      const response = await this.prisma.modulPremium.create({
         data: {
           title,
           description,
-          teacher_id,
-          image_path,
+          course_id,
         },
       });
       return response;
     } catch (error) {
-      throw new Error("Error adding courses");
+      throw new Error("Error adding modul");
     }
   }
-  public async editCourse(
-    course_id: number,
+  public async editModul(
+    modul_id: number,
     title: string,
     description: string,
-    teacher_id: number,
-    image_path?: string
   ) {
     try {
-      const response = await this.prisma.coursePremium.update({
+      const response = await this.prisma.modulPremium.update({
         where: {
-          id: course_id,
+          id: modul_id,
         },
         data: {
           title,
           description,
-          teacher_id,
-          image_path,
         },
       });
       return response;
@@ -62,11 +54,11 @@ export class CourseService {
       throw new Error("Error updating course");
     }
   }
-  public async deleteCourse(course_id: number) {
+  public async deleteModul(modul_id: number) {
     try {
-      const response = await this.prisma.coursePremium.delete({
+      const response = await this.prisma.modulPremium.delete({
         where: {
-          id: course_id,
+          id: modul_id,
         },
       });
       return response;
@@ -75,11 +67,11 @@ export class CourseService {
       throw new Error("Error deleting from database");
     }
   }
-  public async getCourse(course_id: number) {
+  public async getModul(modul_id: number) {
     try {
-      const response = await this.prisma.coursePremium.findUnique({
+      const response = await this.prisma.modulPremium.findUnique({
         where: {
-          id: course_id,
+          id: modul_id,
         },
       });
       return response;
