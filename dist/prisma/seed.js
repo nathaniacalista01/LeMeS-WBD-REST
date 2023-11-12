@@ -12,6 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const prisma = new client_1.PrismaClient();
+const min = 1;
+const max = 29;
 function main() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -43,40 +45,58 @@ const seedUser = () => __awaiter(void 0, void 0, void 0, function* () {
 });
 const seedCourse = () => __awaiter(void 0, void 0, void 0, function* () {
     for (let i = 0; i < 30; i++) {
-        const randomTeacherId = Math.floor(Math.random() * 30);
-        yield prisma.coursePremium.create({
-            data: {
-                title: "title " + i,
-                description: "description " + i,
-                teacher_id: randomTeacherId,
-            },
-        });
+        const randomTeacherId = Math.floor(Math.random() * (max - min + 1) + min);
+        try {
+            yield prisma.coursePremium.create({
+                data: {
+                    title: "title " + i,
+                    description: "description " + i,
+                    teacher_id: randomTeacherId,
+                },
+            });
+        }
+        catch (error) {
+            console.log(randomTeacherId);
+            console.log(error.message);
+        }
     }
 });
 const seedModule = () => __awaiter(void 0, void 0, void 0, function* () {
     for (let i = 0; i < 30; i++) {
-        const randomCourseId = Math.floor(Math.random() * 30);
-        yield prisma.modulPremium.create({
-            data: {
-                title: "title " + i,
-                description: "description " + i,
-                course_id: randomCourseId,
-            },
-        });
+        const randomCourseId = Math.floor(Math.random() * (max - min + 1) + min);
+        try {
+            yield prisma.modulPremium.create({
+                data: {
+                    title: "title " + i,
+                    description: "description " + i,
+                    course_id: randomCourseId,
+                },
+            });
+        }
+        catch (error) {
+            console.log(randomCourseId);
+            console.log(error);
+        }
     }
 });
 const seedMaterial = () => __awaiter(void 0, void 0, void 0, function* () {
     for (let i = 0; i < 30; i++) {
-        const randomModuleId = Math.floor(Math.random() * 30);
-        yield prisma.materialPremium.create({
-            data: {
-                title: "title " + i,
-                description: "description " + i,
-                source_type: "PDF",
-                material_path: "/",
-                module_id: randomModuleId,
-            },
-        });
+        const randomModuleId = Math.floor(Math.random() * (max - min + 1) + min);
+        try {
+            yield prisma.materialPremium.create({
+                data: {
+                    title: "title " + i,
+                    description: "description " + i,
+                    source_type: "PDF",
+                    material_path: "/",
+                    module_id: randomModuleId,
+                },
+            });
+        }
+        catch (error) {
+            console.log(randomModuleId);
+            console.log(error);
+        }
     }
 });
 main()

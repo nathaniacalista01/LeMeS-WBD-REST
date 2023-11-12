@@ -32,7 +32,7 @@ model CoursePremium {
   image_path String?
   teacher_id Int
   release_date DateTime @default(now())
-  teacher User @relation("CourseTeacher",fields: [teacher_id],references: [id])
+  teacher User @relation("CourseTeacher",fields: [teacher_id],references: [id], onDelete: Cascade, onUpdate: Cascade)
   modul ModulPremium[] @relation("CourseModul")
 }
 
@@ -42,7 +42,7 @@ model ModulPremium {
   description String
   course_id Int
   material MaterialPremium[] @relation("ModulMaterial")
-  course CoursePremium @relation("CourseModul", fields: [course_id], references: [id])
+  course CoursePremium @relation("CourseModul", fields: [course_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
 }
 
 model MaterialPremium{
@@ -52,5 +52,5 @@ model MaterialPremium{
   source_type Source
   material_path String
   module_id Int
-  module ModulPremium @relation("ModulMaterial",fields: [module_id],references: [id])
+  module ModulPremium @relation("ModulMaterial",fields: [module_id],references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

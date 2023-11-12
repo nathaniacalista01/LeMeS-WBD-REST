@@ -52,10 +52,10 @@ CREATE TABLE "MaterialPremium" (
 CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
 
 -- AddForeignKey
-ALTER TABLE "CoursePremium" ADD CONSTRAINT "CoursePremium_teacher_id_fkey" FOREIGN KEY ("teacher_id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "CoursePremium" ADD CONSTRAINT "CoursePremium_teacher_id_fkey" FOREIGN KEY ("teacher_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ModulPremium" ADD CONSTRAINT "ModulPremium_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "CoursePremium"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "ModulPremium" ADD CONSTRAINT "ModulPremium_course_id_fkey" FOREIGN KEY ("course_id") REFERENCES "CoursePremium"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "MaterialPremium" ADD CONSTRAINT "MaterialPremium_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "ModulPremium"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "MaterialPremium" ADD CONSTRAINT "MaterialPremium_module_id_fkey" FOREIGN KEY ("module_id") REFERENCES "ModulPremium"("id") ON DELETE CASCADE ON UPDATE CASCADE;

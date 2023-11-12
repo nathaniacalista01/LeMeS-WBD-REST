@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 const bcrypt = require("bcrypt");
 
 const prisma = new PrismaClient();
+const min = 1;
+const max = 29;
 async function main() {
   try {
     // Menjalankan seeding satu per satu
@@ -31,41 +33,56 @@ const seedUser = async () => {
 
 const seedCourse = async () => {
   for (let i = 0; i < 30; i++) {
-    const randomTeacherId = Math.floor(Math.random() * 30);
-    await prisma.coursePremium.create({
-      data: {
-        title: "title " + i,
-        description: "description " + i,
-        teacher_id: randomTeacherId,
-      },
-    });
+    const randomTeacherId = Math.floor(Math.random() * (max - min + 1) + min);
+    try {
+      await prisma.coursePremium.create({
+        data: {
+          title: "title " + i,
+          description: "description " + i,
+          teacher_id: randomTeacherId,
+        },
+      });
+    } catch (error: any) {
+      console.log(randomTeacherId);
+      console.log(error.message);
+    }
   }
 };
 const seedModule = async () => {
   for (let i = 0; i < 30; i++) {
-    const randomCourseId = Math.floor(Math.random() * 30);
-    await prisma.modulPremium.create({
-      data: {
-        title: "title " + i,
-        description: "description " + i,
-        course_id: randomCourseId,
-      },
-    });
+    const randomCourseId = Math.floor(Math.random() * (max - min + 1) + min);
+    try {
+      await prisma.modulPremium.create({
+        data: {
+          title: "title " + i,
+          description: "description " + i,
+          course_id: randomCourseId,
+        },
+      });
+    } catch (error) {
+      console.log(randomCourseId);
+      console.log(error);
+    }
   }
 };
 
 const seedMaterial = async () => {
   for (let i = 0; i < 30; i++) {
-    const randomModuleId = Math.floor(Math.random() * 30);
-    await prisma.materialPremium.create({
-      data: {
-        title: "title " + i,
-        description: "description " + i,
-        source_type: "PDF",
-        material_path: "/",
-        module_id: randomModuleId,
-      },
-    });
+    const randomModuleId = Math.floor(Math.random() * (max - min + 1) + min);
+    try {
+      await prisma.materialPremium.create({
+        data: {
+          title: "title " + i,
+          description: "description " + i,
+          source_type: "PDF",
+          material_path: "/",
+          module_id: randomModuleId,
+        },
+      });
+    } catch (error: any) {
+      console.log(randomModuleId);
+      console.log(error);
+    }
   }
 };
 
