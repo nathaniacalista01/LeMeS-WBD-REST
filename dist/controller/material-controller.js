@@ -12,18 +12,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.modulRouter = void 0;
+exports.materialRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const modul_service_1 = require("../service/modul-service");
-exports.modulRouter = express_1.default.Router();
-exports.modulRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const module_service = new modul_service_1.ModulService();
+const material_service_1 = require("../service/material-service");
+exports.materialRouter = express_1.default.Router();
+exports.materialRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const material_service = new material_service_1.MaterialService();
     try {
-        const moduls = yield module_service.getAllModuls();
-        if (moduls) {
+        const materials = yield material_service.getAllMaterials();
+        if (materials) {
             return res.json({
                 status: 200,
-                data: moduls,
+                data: materials,
             });
         }
         else {
@@ -40,11 +40,11 @@ exports.modulRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, fun
         });
     }
 }));
-exports.modulRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title, description, course_id } = req.body;
-    const modulService = new modul_service_1.ModulService();
+exports.materialRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { title, description, source_type, material_path, modul_id } = req.body;
+    const material_service = new material_service_1.MaterialService();
     try {
-        const response = yield modulService.addModul(title, description, course_id);
+        const response = yield material_service.addMaterial(title, description, source_type, material_path, modul_id);
         return res.json({
             status: 200,
             message: response,
@@ -57,12 +57,12 @@ exports.modulRouter.post("/", (req, res) => __awaiter(void 0, void 0, void 0, fu
         });
     }
 }));
-exports.modulRouter.put("/:modul_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { modul_id } = req.params;
-    const { title, description } = req.body;
-    const modulService = new modul_service_1.ModulService();
+exports.materialRouter.put("/:material_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { material_id } = req.params;
+    const { title, description, source_type, material_path } = req.body;
+    const material_service = new material_service_1.MaterialService();
     try {
-        const response = yield modulService.editModul(parseInt(modul_id), title, description);
+        const response = yield material_service.editMaterial(parseInt(material_id), title, description, source_type, material_path);
         return res.json({
             status: 200,
             message: response,
@@ -75,11 +75,11 @@ exports.modulRouter.put("/:modul_id", (req, res) => __awaiter(void 0, void 0, vo
         });
     }
 }));
-exports.modulRouter.delete("/:modul_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { modul_id } = req.params;
-    const modulService = new modul_service_1.ModulService();
+exports.materialRouter.delete("/:material_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { material_id } = req.params;
+    const material_service = new material_service_1.MaterialService();
     try {
-        const response = yield modulService.deleteModul(parseInt(modul_id));
+        const response = yield material_service.deleteMaterial(parseInt(material_id));
         return res.json({
             status: 200,
             message: response,
@@ -92,11 +92,11 @@ exports.modulRouter.delete("/:modul_id", (req, res) => __awaiter(void 0, void 0,
         });
     }
 }));
-exports.modulRouter.get("/:modul_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { modul_id } = req.params;
-    const modulService = new modul_service_1.ModulService();
+exports.materialRouter.get("/:material_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { material_id } = req.params;
+    const material_service = new material_service_1.MaterialService();
     try {
-        const response = yield modulService.getModul(parseInt(modul_id));
+        const response = yield material_service.getMaterial(parseInt(material_id));
         if (!response) {
             res.json({
                 status: 400,

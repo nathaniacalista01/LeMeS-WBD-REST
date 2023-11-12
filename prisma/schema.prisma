@@ -51,6 +51,6 @@ model MaterialPremium{
   description String
   source_type Source
   material_path String
-  module_id Int
-  module ModulPremium @relation("ModulMaterial",fields: [module_id],references: [id], onDelete: Cascade, onUpdate: Cascade)
+  modul_id Int
+  modul ModulPremium @relation("ModulMaterial",fields: [modul_id],references: [id], onDelete: Cascade, onUpdate: Cascade)
 }

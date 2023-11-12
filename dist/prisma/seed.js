@@ -92,7 +92,7 @@ const seedMaterial = () => __awaiter(void 0, void 0, void 0, function* () {
                     description: "description " + i,
                     source_type: "PDF",
                     material_path: "/",
-                    module_id: randomModuleId,
+                    modul_id: randomModuleId,
                 },
             });
         }

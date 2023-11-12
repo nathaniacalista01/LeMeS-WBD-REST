@@ -76,7 +76,7 @@ const seedMaterial = async () => {
           description: "description " + i,
           source_type: "PDF",
           material_path: "/",
-          module_id: randomModuleId,
+          modul_id: randomModuleId,
         },
       });
     } catch (error: any) {
