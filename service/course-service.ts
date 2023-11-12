@@ -73,4 +73,16 @@ export class CourseService {
       throw new Error("Error deleting from database");
     }
   }
+  public async getCourse(course_id: number) {
+    try {
+      const response = await this.prisma.coursePremium.findUnique({
+        where: {
+          id: course_id,
+        },
+      });
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }

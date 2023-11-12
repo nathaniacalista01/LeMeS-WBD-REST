@@ -84,13 +84,38 @@ exports.courseRouter.delete("/:course_id", (req, res) => __awaiter(void 0, void 
         const response = yield courseService.deleteCourse(parseInt(course_id));
         return res.json({
             status: 200,
-            message: response
+            message: response,
         });
     }
     catch (error) {
         return res.json({
             status: 500,
-            message: error.message
+            message: error.message,
+        });
+    }
+}));
+exports.courseRouter.get("/:course_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { course_id } = req.params;
+    const courseService = new course_service_1.CourseService();
+    try {
+        const response = yield courseService.getCourse(parseInt(course_id));
+        if (!response) {
+            res.json({
+                status: 400,
+                message: "Error getting data",
+            });
+        }
+        else {
+            res.json({
+                status: 200,
+                message: response,
+            });
+        }
+    }
+    catch (error) {
+        return res.json({
+            status: 400,
+            message: error.message,
         });
     }
 }));

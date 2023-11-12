@@ -82,5 +82,20 @@ class CourseService {
             }
         });
     }
+    getCourse(course_id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const response = yield this.prisma.coursePremium.findUnique({
+                    where: {
+                        id: course_id,
+                    },
+                });
+                return response;
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        });
+    }
 }
 exports.CourseService = CourseService;
