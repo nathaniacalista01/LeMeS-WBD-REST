@@ -58,7 +58,6 @@ export class CourseService {
       });
       return response;
     } catch (error: any) {
-      console.log(error.message);
       throw new Error("Error updating course");
     }
   }
@@ -83,6 +82,40 @@ export class CourseService {
         },
       });
       return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  public async searchCourse(title: string) {
+    try {
+      const users = await this.prisma.coursePremium.findMany({
+        where: {
+          title: {
+            contains: title,
+          },
+        },
+      });
+      return users;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  public async searchCoursePagination(title: string, page: number) {
+    const items_per_page = 8;
+    const skip = (page - 1) * items_per_page;
+    try {
+      const user = await this.prisma.coursePremium.findMany({
+        where: {
+          title: {
+            contains: title,
+          },
+        },
+        take: items_per_page,
+        skip: skip,
+      });
+      return user;
     } catch (error: any) {
       throw new Error(error.message);
     }

@@ -122,18 +122,18 @@ export class UserService {
     const skip = (page - 1) * items_per_page;
 
     try {
-        const user = await this.prisma.user.findMany({
-            where:{
-                username:{
-                    contains : username
-                },
-            },
-            take : items_per_page,
-            skip : skip,
-        })
-        return user;
-    } catch (error:any) {
-        throw new Error(error.message);
+      const user = await this.prisma.user.findMany({
+        where: {
+          username: {
+            contains: username,
+          },
+        },
+        take: items_per_page,
+        skip: skip,
+      });
+      return user;
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
 }

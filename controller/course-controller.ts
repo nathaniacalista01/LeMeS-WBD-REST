@@ -36,7 +36,6 @@ courseRouter.post("/", async (req: Request, res: Response) => {
       teacher_id,
       image_path
     );
-    console.log(response);
     return res.json({
       status: 200,
       message: response,
@@ -90,6 +89,31 @@ courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
     });
   }
 });
+courseRouter.get("/search", async (req: Request, res: Response) => {
+  const { title, page} = req.query;
+  const course_service = new CourseService();
+  const title_query = title ? title.toString() : "";
+  const page_number = page ? parseInt(page.toString(), 10) : 1;
+  try {
+    const courses = await course_service.searchCoursePagination(title_query,page_number);
+    if(courses){
+      return res.json({
+        status : 200,
+        data : courses
+      })
+    }else{
+      return res.json({
+        status :400,
+        data : []
+      })
+    }
+  } catch (error : any) {
+    return res.json({
+      status : 500,
+      message : error.message
+    })
+  }
+});
 
 courseRouter.get("/:course_id", async (req: Request, res: Response) => {
   const { course_id } = req.params;
@@ -114,4 +138,3 @@ courseRouter.get("/:course_id", async (req: Request, res: Response) => {
     });
   }
 });
-// courseRouter.put("/",)
