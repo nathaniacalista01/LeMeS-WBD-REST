@@ -32,5 +32,21 @@ authRouter.post("/login", async (req: Request, res: Response) => {
 
 authRouter.post("/register", async (req: Request, res: Response) => {
   const { username, fullname, password, image_path } = req.body;
-  
+  const user_service = new AuthService();
+  const result = await user_service.register(
+    username,
+    fullname,
+    password,
+    image_path
+  );
+  if (result == Error.REGISTER_FAILED) {
+    return res.json({
+      status: 400,
+      message: Error.REGISTER_FAILED,
+    });
+  }
+  return res.json({
+    status: 200,
+    data: result,
+  });
 });
