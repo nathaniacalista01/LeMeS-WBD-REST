@@ -1,11 +1,93 @@
 import { PrismaClient } from "@prisma/client";
+import { DB } from "../db/db";
+import bcrypt, { hash } from "bcrypt";
 
-const prisma = new PrismaClient();
-export const getUsers = async () => {
-    const users = await prisma.user.findMany();
-    return users;
-};
+export class UserService {
+  private prisma: PrismaClient;
+  constructor() {
+    const db: DB = DB.getInstance();
+    this.prisma = db.getPrisma();
+  }
+  public async getAllUser() {
+    try {
+      const users = await this.prisma.user.findMany();
+      console.log(users);
+      return users;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 
-export const testing = async()=>{
-    return "Hi";
+  public async addUser(
+    username: string,
+    fullname: string,
+    password: string,
+    image_path?: string
+  ) {
+    try {
+      const hashed_password = await bcrypt.hash(password, 10);
+      const response = await this.prisma.user.create({
+        data: {
+          username,
+          fullname,
+          password: hashed_password,
+        },
+      });
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+  public async editUser(
+    user_id: number,
+    username: string,
+    fullname: string,
+    password: string,
+    image_path?: string
+  ) {
+    const hashed_password = await bcrypt.hash(password, 10);
+    try {
+      const response = await this.prisma.user.update({
+        where: {
+          id: user_id,
+        },
+        data: {
+          username,
+          fullname,
+          password: hashed_password,
+          image_path,
+        },
+      });
+      console.log(response);
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  public async deleteUser(user_id: number) {
+    try {
+      const response = await this.prisma.user.delete({
+        where: {
+          id: user_id,
+        },
+      });
+      return response;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  public async getUser(user_id: number) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          id: user_id,
+        },
+      });
+      return user;
+    } catch (error: any) {
+      return new Error(error.message);
+    }
+  }
 }

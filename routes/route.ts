@@ -1,5 +1,4 @@
 import express, { Express, Request, Response } from "express";
-import { getUsers, testing } from "../service/user-service";
 import { userRouter } from "../controller/user-controller";
 import { courseRouter } from "../controller/course-controller";
 import { premiumRouter } from "../controller/premium-controller";

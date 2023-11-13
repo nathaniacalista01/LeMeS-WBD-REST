@@ -106,7 +106,7 @@ exports.modulRouter.get("/:modul_id", (req, res) => __awaiter(void 0, void 0, vo
         else {
             res.json({
                 status: 200,
-                message: response,
+                data: response,
             });
         }
     }

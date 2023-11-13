@@ -94,7 +94,7 @@ modulRouter.get("/:modul_id", async (req: Request, res: Response) => {
     } else {
       res.json({
         status: 200,
-        message: response,
+        data: response,
       });
     }
   } catch (error: any) {

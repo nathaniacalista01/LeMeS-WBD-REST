@@ -106,7 +106,7 @@ exports.materialRouter.get("/:material_id", (req, res) => __awaiter(void 0, void
         else {
             res.json({
                 status: 200,
-                message: response,
+                data: response,
             });
         }
     }
