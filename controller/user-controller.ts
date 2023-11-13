@@ -5,24 +5,33 @@ export const userRouter = express.Router();
 
 userRouter.get("/", async (req: Request, res: Response) => {
   const user_service = new UserService();
-  try {
-    const users = await user_service.getAllUser();
-    if (!users) {
+  const { page } = req.query;
+  const pageNumber = page ? parseInt(page.toString(), 10) : 1;
+  if (page) {
+    try {
+      const users = await user_service.usersPagination(pageNumber);
+      if (users) {
+        return res.json({
+          status: 200,
+          data: users,
+        });
+      } else {
+        return res.json({
+          status: 400,
+          data: [],
+        });
+      }
+    } catch (error: any) {
       return res.json({
-        status: 400,
-        data : []
-    });
-    } else {
-      return res.json({
-        status: 200,
-        data: users,
+        status: 500,
+        message: error.message,
       });
     }
-  } catch (error: any) {
+  }else{
     return res.json({
-      status: 500,
-      message: error.mesasge,
-    });
+        status : 500,
+        message : "Page number invalid"
+    })
   }
 });
 

@@ -20,11 +20,26 @@ class UserService {
         const db = db_1.DB.getInstance();
         this.prisma = db.getPrisma();
     }
+    usersPagination(page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const items_per_page = 8;
+            const skip = (page - 1) * items_per_page;
+            try {
+                const users = yield this.prisma.user.findMany({
+                    take: items_per_page,
+                    skip: skip
+                });
+                return users;
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        });
+    }
     getAllUser() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const users = yield this.prisma.user.findMany();
-                console.log(users);
                 return users;
             }
             catch (error) {
@@ -65,7 +80,6 @@ class UserService {
                         image_path,
                     },
                 });
-                console.log(response);
                 return response;
             }
             catch (error) {

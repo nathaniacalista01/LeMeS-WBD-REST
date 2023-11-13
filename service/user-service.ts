@@ -8,10 +8,23 @@ export class UserService {
     const db: DB = DB.getInstance();
     this.prisma = db.getPrisma();
   }
+
+  public async usersPagination(page : number){
+    const items_per_page = 8;
+    const skip = (page - 1)* items_per_page;
+    try {
+        const users = await this.prisma.user.findMany({
+            take : items_per_page,
+            skip:skip
+        })
+        return users;
+    } catch (error : any) {
+        throw new Error(error.message);
+    }
+  }
   public async getAllUser() {
     try {
       const users = await this.prisma.user.findMany();
-      console.log(users);
       return users;
     } catch (error: any) {
       throw new Error(error.message);
@@ -58,7 +71,6 @@ export class UserService {
           image_path,
         },
       });
-      console.log(response);
       return response;
     } catch (error: any) {
       throw new Error(error.message);

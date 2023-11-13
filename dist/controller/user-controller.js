@@ -18,25 +18,35 @@ const user_service_1 = require("../service/user-service");
 exports.userRouter = express_1.default.Router();
 exports.userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user_service = new user_service_1.UserService();
-    try {
-        const users = yield user_service.getAllUser();
-        if (!users) {
-            return res.json({
-                status: 400,
-                data: []
-            });
+    const { page } = req.query;
+    const pageNumber = page ? parseInt(page.toString(), 10) : 1;
+    if (page) {
+        try {
+            const users = yield user_service.usersPagination(pageNumber);
+            if (users) {
+                return res.json({
+                    status: 200,
+                    data: users,
+                });
+            }
+            else {
+                return res.json({
+                    status: 400,
+                    data: [],
+                });
+            }
         }
-        else {
+        catch (error) {
             return res.json({
-                status: 200,
-                data: users,
+                status: 500,
+                message: error.message,
             });
         }
     }
-    catch (error) {
+    else {
         return res.json({
             status: 500,
-            message: error.mesasge,
+            message: "Page number invalid"
         });
     }
 }));
