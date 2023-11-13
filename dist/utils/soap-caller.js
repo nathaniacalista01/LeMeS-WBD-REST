@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const xml_js_1 = __importDefault(require("xml-js"));
+const node_fetch_1 = __importDefault(require("node-fetch"));
 class SoapCaller {
     constructor() {
         const url = process.env.SOAP_URL;
@@ -30,7 +31,7 @@ class SoapCaller {
             };
             const xml = this.buildXMLRequest(method, params);
             console.log("Ini xml request : ", xml);
-            const response = yield fetch(this.url, {
+            const response = yield (0, node_fetch_1.default)(this.url, {
                 headers: headers,
                 method: "POST",
                 body: xml,

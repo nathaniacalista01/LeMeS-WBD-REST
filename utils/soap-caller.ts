@@ -1,12 +1,13 @@
 import converter from "xml-js";
+import fetch from "node-fetch";
 
 export default class SoapCaller {
   private url: string;
   constructor() {
-    const url : string | undefined = process.env.SOAP_URL;
-    if(url){
+    const url: string | undefined = process.env.SOAP_URL;
+    if (url) {
       this.url = url;
-    }else{
+    } else {
       this.url = "http://host.docker.internal:8080/premium?wsdl";
     }
   }
@@ -16,14 +17,14 @@ export default class SoapCaller {
       "Content-Type": "text/xml",
     };
     const xml = this.buildXMLRequest(method, params);
-    console.log("Ini xml request : ",xml);
+    console.log("Ini xml request : ", xml);
     const response = await fetch(this.url, {
       headers: headers,
       method: "POST",
       body: xml,
     });
     const text: string = await response.text();
-    console.log("Ini text : ",text);
+    console.log("Ini text : ", text);
     const result = this.parseXML(text, method);
     return result;
   }

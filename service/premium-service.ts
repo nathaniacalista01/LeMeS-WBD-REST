@@ -1,8 +1,9 @@
+import { response } from "express";
 import { Premium } from "../types/type";
 import SoapCaller from "../utils/soap-caller";
 
 export class PremiumService {
-  private soap_caller : SoapCaller = new SoapCaller();
+  private soap_caller: SoapCaller = new SoapCaller();
 
   public async getAllPremium() {
     // const soap_caller = new SoapCaller();
@@ -15,31 +16,42 @@ export class PremiumService {
       throw new Error(error.getMessage());
     }
   }
-  
-  public async updatePremium(data : Object){
-    const result : any = await this.soap_caller.call("updatePremiumStatus",data);
-    console.log("Ini result",result)    
+
+  public async updatePremium(data: Object) {
+    const result: any = await this.soap_caller.call(
+      "updatePremiumStatus",
+      data
+    );
     try {
-      const response =result["_text"];
-      if(response !== "Error"){
-        return "Sucess"
+      const response = result["_text"];
+      if (response !== "Not Exists") {
+        return "Sucess";
       }
-    } catch (error : any) {
+    } catch (error: any) {
       throw new Error(error.getMessage());
     }
   }
 
-  public async deletePremium(data : Object){
-    const result : any = await this.soap_caller.call("deleteRequest",data);
-    console.log("Ini result ; ", result);
+  public async deletePremium(data: Object) {
+    const result: any = await this.soap_caller.call("deleteRequest", data);
     try {
       const response = result["_text"];
-      if(response !== "Error"){
+      if (response !== "Error") {
         return "Success";
       }
     } catch (error) {
-      return "Error"
+      return "Error";
     }
   }
-  
+
+  public async searchPremium(data: Object) {
+    const result: any = await this.soap_caller.call("searchPremium", data);
+    try {
+      const response = await JSON.parse(result["_text"]);
+      const data : Premium[]= response["data"];
+      return data;
+    } catch (error:any) {
+      throw new Error(error.message);
+    }
+  }
 }

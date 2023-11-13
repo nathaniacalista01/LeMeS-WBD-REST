@@ -42,6 +42,29 @@ exports.premiumRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, f
         });
     }
 }));
+exports.premiumRouter.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username } = req.query;
+    console.log(username);
+    // const page_number = page ? parseInt(page.toString(), 10) : 1;
+    const premium_service = new premium_service_1.PremiumService();
+    const data = {
+        username: username,
+    };
+    try {
+        const response = yield premium_service.searchPremium(data);
+        res.json({
+            status: 200,
+            message: response
+        });
+    }
+    catch (error) {
+        console.log(error);
+        res.json({
+            status: 500,
+            message: "Error",
+        });
+    }
+}));
 exports.premiumRouter.put("/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { user_id } = req.params;
     const { newStatus } = req.body;
@@ -76,7 +99,7 @@ exports.premiumRouter.put("/:user_id", (req, res) => __awaiter(void 0, void 0, v
 exports.premiumRouter.delete("/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { user_id } = req.params;
     const data = {
-        user_id
+        user_id,
     };
     const premium_service = new premium_service_1.PremiumService();
     try {
@@ -84,20 +107,20 @@ exports.premiumRouter.delete("/:user_id", (req, res) => __awaiter(void 0, void 0
         if (status) {
             res.json({
                 status: 200,
-                message: "Successfully deleted a request"
+                message: "Successfully deleted a request",
             });
         }
         else {
             res.json({
                 status: 400,
-                message: "User not found"
+                message: "User not found",
             });
         }
     }
     catch (error) {
         res.json({
             status: 500,
-            message: "Internal server error"
+            message: "Internal server error",
         });
     }
 }));

@@ -50,7 +50,6 @@ class PremiumService {
     deletePremium(data) {
         return __awaiter(this, void 0, void 0, function* () {
             const result = yield this.soap_caller.call("deleteRequest", data);
-            console.log("Ini result ; ", result);
             try {
                 const response = result["_text"];
                 if (response !== "Error") {
@@ -59,6 +58,19 @@ class PremiumService {
             }
             catch (error) {
                 return "Error";
+            }
+        });
+    }
+    searchPremium(data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield this.soap_caller.call("searchPremium", data);
+            console.log("Ini result : ", result);
+            try {
+                const response = yield JSON.parse(result["_text"]);
+                console.log(response);
+            }
+            catch (error) {
+                throw new Error(error.message);
             }
         });
     }

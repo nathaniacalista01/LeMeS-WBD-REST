@@ -102,6 +102,33 @@ exports.userRouter.delete("/:user_id", (req, res) => __awaiter(void 0, void 0, v
         });
     }
 }));
+exports.userRouter.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { username, page } = req.query;
+    const user_service = new user_service_1.UserService();
+    const username_query = username ? username.toString() : "";
+    const page_number = page ? parseInt(page.toString(), 10) : 1;
+    try {
+        const users = yield user_service.searchUserPagination(username_query, page_number);
+        if (users) {
+            return res.json({
+                status: 200,
+                data: users,
+            });
+        }
+        else {
+            return res.json({
+                status: 400,
+                data: [],
+            });
+        }
+    }
+    catch (error) {
+        return res.json({
+            status: 500,
+            message: error.message,
+        });
+    }
+}));
 exports.userRouter.get("/:user_id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { user_id } = req.params;
     const user_service = new user_service_1.UserService();
@@ -126,10 +153,4 @@ exports.userRouter.get("/:user_id", (req, res) => __awaiter(void 0, void 0, void
             message: error.message,
         });
     }
-}));
-exports.userRouter.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    res.json({
-        status: 200,
-        message: "Searched success!"
-    });
 }));

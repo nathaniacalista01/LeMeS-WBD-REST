@@ -134,9 +134,9 @@ class UserService {
             }
         });
     }
-    searchUserPagionation(username, page) {
+    searchUserPagination(username, page) {
         return __awaiter(this, void 0, void 0, function* () {
-            const items_per_page = 4;
+            const items_per_page = 8;
             const skip = (page - 1) * items_per_page;
             try {
                 const user = yield this.prisma.user.findMany({
