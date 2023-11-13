@@ -12,7 +12,7 @@ class App {
         this.server.use("/api", route_1.default);
     }
     run() {
-        this.server.listen(3000, () => {
+        this.server.listen(8000, () => {
             console.log("Server is listening...");
         });
     }

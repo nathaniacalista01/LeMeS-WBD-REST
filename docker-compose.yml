@@ -18,7 +18,7 @@ services:
   rest-services:
     container_name: rest
     ports:
-      - "3000:3000"
+      - "8000:8000"
     volumes:
       - ./:/app
       - /app/node_modules
