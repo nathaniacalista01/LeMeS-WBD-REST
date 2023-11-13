@@ -6,10 +6,10 @@ export const userRouter = express.Router();
 userRouter.get("/", async (req: Request, res: Response) => {
   const user_service = new UserService();
   const { page } = req.query;
-  const pageNumber = page ? parseInt(page.toString(), 10) : 1;
+  const page_number = page ? parseInt(page.toString(), 10) : 1;
   if (page) {
     try {
-      const users = await user_service.usersPagination(pageNumber);
+      const users = await user_service.usersPagination(page_number);
       if (users) {
         return res.json({
           status: 200,
@@ -27,11 +27,11 @@ userRouter.get("/", async (req: Request, res: Response) => {
         message: error.message,
       });
     }
-  }else{
+  } else {
     return res.json({
-        status : 500,
-        message : "Page number invalid"
-    })
+      status: 500,
+      message: "Page number invalid",
+    });
   }
 });
 
@@ -76,7 +76,7 @@ userRouter.put("/:user_id", async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.json({
       status: 500,
-      messaeg: error.message,
+      messaeg: "Error updating user",
     });
   }
 });
@@ -92,6 +92,35 @@ userRouter.delete("/:user_id", async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     res.json({
+      status: 500,
+      message: error.message,
+    });
+  }
+});
+
+userRouter.get("/search", async (req: Request, res: Response) => {
+  const { username, page } = req.query;
+  const user_service = new UserService();
+  const username_query = username ? username.toString() : "";
+  const page_number = page ? parseInt(page.toString(), 10) : 1;
+  try {
+    const users = await user_service.searchUserPagination(
+      username_query,
+      page_number
+    );
+    if (users) {
+      return res.json({
+        status: 200,
+        data: users,
+      });
+    } else {
+      return res.json({
+        status: 400,
+        data: [],
+      });
+    }
+  } catch (error: any) {
+    return res.json({
       status: 500,
       message: error.message,
     });

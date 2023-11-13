@@ -9,17 +9,17 @@ export class UserService {
     this.prisma = db.getPrisma();
   }
 
-  public async usersPagination(page : number){
+  public async usersPagination(page: number) {
     const items_per_page = 8;
-    const skip = (page - 1)* items_per_page;
+    const skip = (page - 1) * items_per_page;
     try {
-        const users = await this.prisma.user.findMany({
-            take : items_per_page,
-            skip:skip
-        })
-        return users;
-    } catch (error : any) {
-        throw new Error(error.message);
+      const users = await this.prisma.user.findMany({
+        take: items_per_page,
+        skip: skip,
+      });
+      return users;
+    } catch (error: any) {
+      throw new Error(error.message);
     }
   }
   public async getAllUser() {
@@ -100,6 +100,40 @@ export class UserService {
       return user;
     } catch (error: any) {
       return new Error(error.message);
+    }
+  }
+
+  public async searchUser(username: string) {
+    try {
+      const users = await this.prisma.user.findMany({
+        where: {
+          username: {
+            contains: username,
+          },
+        },
+      });
+      return users;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+  public async searchUserPagination(username: string, page: number) {
+    const items_per_page = 8;
+    const skip = (page - 1) * items_per_page;
+
+    try {
+        const user = await this.prisma.user.findMany({
+            where:{
+                username:{
+                    contains : username
+                },
+            },
+            take : items_per_page,
+            skip : skip,
+        })
+        return user;
+    } catch (error:any) {
+        throw new Error(error.message);
     }
   }
 }

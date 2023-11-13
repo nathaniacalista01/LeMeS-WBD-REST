@@ -19,10 +19,10 @@ exports.userRouter = express_1.default.Router();
 exports.userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const user_service = new user_service_1.UserService();
     const { page } = req.query;
-    const pageNumber = page ? parseInt(page.toString(), 10) : 1;
+    const page_number = page ? parseInt(page.toString(), 10) : 1;
     if (page) {
         try {
-            const users = yield user_service.usersPagination(pageNumber);
+            const users = yield user_service.usersPagination(page_number);
             if (users) {
                 return res.json({
                     status: 200,
@@ -46,7 +46,7 @@ exports.userRouter.get("/", (req, res) => __awaiter(void 0, void 0, void 0, func
     else {
         return res.json({
             status: 500,
-            message: "Page number invalid"
+            message: "Page number invalid",
         });
     }
 }));
@@ -81,7 +81,7 @@ exports.userRouter.put("/:user_id", (req, res) => __awaiter(void 0, void 0, void
     catch (error) {
         return res.json({
             status: 500,
-            messaeg: error.message,
+            messaeg: "Error updating user",
         });
     }
 }));
@@ -126,4 +126,10 @@ exports.userRouter.get("/:user_id", (req, res) => __awaiter(void 0, void 0, void
             message: error.message,
         });
     }
+}));
+exports.userRouter.get("/search", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.json({
+        status: 200,
+        message: "Searched success!"
+    });
 }));

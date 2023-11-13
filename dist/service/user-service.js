@@ -27,7 +27,7 @@ class UserService {
             try {
                 const users = yield this.prisma.user.findMany({
                     take: items_per_page,
-                    skip: skip
+                    skip: skip,
                 });
                 return users;
             }
@@ -114,6 +114,44 @@ class UserService {
             }
             catch (error) {
                 return new Error(error.message);
+            }
+        });
+    }
+    searchUser(username) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const users = yield this.prisma.user.findMany({
+                    where: {
+                        username: {
+                            contains: username,
+                        },
+                    },
+                });
+                return users;
+            }
+            catch (error) {
+                throw new Error(error.message);
+            }
+        });
+    }
+    searchUserPagionation(username, page) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const items_per_page = 4;
+            const skip = (page - 1) * items_per_page;
+            try {
+                const user = yield this.prisma.user.findMany({
+                    where: {
+                        username: {
+                            contains: username
+                        },
+                    },
+                    take: items_per_page,
+                    skip: skip,
+                });
+                return user;
+            }
+            catch (error) {
+                throw new Error(error.message);
             }
         });
     }
