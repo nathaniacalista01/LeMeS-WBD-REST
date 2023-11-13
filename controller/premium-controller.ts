@@ -30,7 +30,6 @@ premiumRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-
 premiumRouter.get("/search", async (req: Request, res: Response) => {
   // Service yang digunakan untuk search request berdasarkan username
 
@@ -49,6 +48,34 @@ premiumRouter.get("/search", async (req: Request, res: Response) => {
   } catch (error) {
     // console.log(error);
     res.json({
+      status: 500,
+      message: "Error",
+    });
+  }
+});
+
+premiumRouter.get("/filter", async (req: Request, res: Response) => {
+  // Service yang digunakan untuk memfilter berdasarkan query tertentu
+  const { status } = req.query;
+  const premium_service = new PremiumService();
+  const data = {
+    filter: status,
+  };
+  try {
+    const result: Premium[] = await premium_service.filterPremium(data);
+    if (!result) {
+      return res.json({
+        status: 400,
+        message: "Data not found",
+      });
+    } else {
+      return res.json({
+        status: 200,
+        data: result,
+      });
+    }
+  } catch (error) {
+    return res.json({
       status: 500,
       message: "Error",
     });

@@ -48,9 +48,20 @@ export class PremiumService {
     const result: any = await this.soap_caller.call("searchPremium", data);
     try {
       const response = await JSON.parse(result["_text"]);
-      const data : Premium[]= response["data"];
+      const data: Premium[] = response["data"];
       return data;
-    } catch (error:any) {
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
+
+  public async filterPremium(data: Object) {
+    const result: any = await this.soap_caller.call("filterPremium", data);
+    try {
+      const response = await JSON.parse(result["_text"]);
+      const data: Premium[] = response["data"];
+      return data;
+    } catch (error: any) {
       throw new Error(error.message);
     }
   }
