@@ -1,6 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { DB } from "../db/db";
 import bcrypt, { hash } from "bcrypt";
+import { Error, Success } from "../types/type";
 
 export class UserService {
   private prisma: PrismaClient;
@@ -18,8 +19,8 @@ export class UserService {
         skip: skip,
       });
       return users;
-    } catch (error: any) {
-      throw new Error(error.message);
+    } catch (error) {
+      return Error.FETCH_FAILED;
     }
   }
   public async getAllUser() {
@@ -27,7 +28,7 @@ export class UserService {
       const users = await this.prisma.user.findMany();
       return users;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
 
@@ -44,11 +45,12 @@ export class UserService {
           username,
           fullname,
           password: hashed_password,
+          image_path,
         },
       });
       return response;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.REGISTER_FAILED;
     }
   }
   public async editUser(
@@ -72,8 +74,8 @@ export class UserService {
         },
       });
       return response;
-    } catch (error: any) {
-      throw new Error(error.message);
+    } catch (error) {
+      return Error.EDIT_FAILED;
     }
   }
 
@@ -86,7 +88,7 @@ export class UserService {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.DELETE_FAILED;
     }
   }
 
@@ -99,7 +101,7 @@ export class UserService {
       });
       return user;
     } catch (error: any) {
-      return new Error(error.message);
+      return Error.USER_NOT_FOUND;
     }
   }
 
@@ -121,7 +123,7 @@ export class UserService {
       });
       return user;
     } catch (error) {
-      
+      return Error.USER_NOT_FOUND;
     }
   }
 
@@ -136,7 +138,7 @@ export class UserService {
       });
       return users;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
   public async searchUserPagination(username: string, page: number) {
@@ -155,7 +157,7 @@ export class UserService {
       });
       return user;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
 }

@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 import { DB } from "../db/db";
 import bcrypt from "bcrypt";
 import { UserService } from "./user-service";
-import { Error } from "../types/type";
+import { Error, Success } from "../types/type";
 const jwt = require("jsonwebtoken");
 
 export class AuthService {
@@ -15,7 +15,7 @@ export class AuthService {
   }
   public async login(username: string, password: string) {
     const user = await this.user.getUserByUsername(username);
-    if (user) {
+    if (user && user !== Error.USER_NOT_FOUND){
       const isValid = await bcrypt.compare(password, user.password);
       if (isValid) {
         const jwt_secret_key = process.env.JWT_SECRET_KEY as string;
@@ -25,7 +25,9 @@ export class AuthService {
           username: username,
           isAdmin: user.isAdmin,
         };
-        const token = jwt.sign(payload, jwt_secret_key,{expiresIn : jwt_expired_time});
+        const token = jwt.sign(payload, jwt_secret_key, {
+          expiresIn: jwt_expired_time,
+        });
         return token;
       } else {
         return Error.WRONG_PASSWORD;
@@ -33,5 +35,19 @@ export class AuthService {
     } else {
       return Error.USER_NOT_FOUND;
     }
+  }
+  public async register(
+    username: string,
+    fullname: string,
+    password: string,
+    image_path?: string
+  ) {
+    const result = await this.user.addUser(
+      username,
+      fullname,
+      password,
+      image_path
+    );
+    return result;
   }
 }

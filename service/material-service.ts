@@ -40,10 +40,10 @@ export class MaterialService {
   }
   public async editMaterial(
     material_id: number,
-    title?: string,
-    description?: string,
-    source_type?: Source,
-    material_path?: string,
+    title: string,
+    description: string,
+    source_type: Source,
+    material_path: string,
   ) {
     try {
       const response = await this.prisma.materialPremium.update({

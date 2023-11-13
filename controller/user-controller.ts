@@ -1,5 +1,6 @@
 import express, { Express, Request, Response } from "express";
 import { UserService } from "../service/user-service";
+import { Error, Success } from "../types/type";
 
 export const userRouter = express.Router();
 
@@ -7,95 +8,77 @@ userRouter.get("/", async (req: Request, res: Response) => {
   const user_service = new UserService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
-  if (page) {
-    try {
-      const users = await user_service.usersPagination(page_number);
-      if (users) {
-        return res.json({
-          status: 200,
-          data: users,
-        });
-      } else {
-        return res.json({
-          status: 400,
-          data: [],
-        });
-      }
-    } catch (error: any) {
-      return res.json({
-        status: 500,
-        message: error.message,
-      });
-    }
-  } else {
+  const users = await user_service.usersPagination(page_number);
+  if (users == Error.FETCH_FAILED) {
     return res.json({
       status: 500,
-      message: "Page number invalid",
+      message: Error.FETCH_FAILED,
     });
   }
+  return res.json({
+    status: 200,
+    data: users,
+  });
 });
 
 userRouter.post("/", async (req: Request, res: Response) => {
   const user_service = new UserService();
   const { username, fullname, password, image_path } = req.body;
-  try {
-    const response = await user_service.addUser(
-      username,
-      fullname,
-      password,
-      image_path
-    );
+  const response = await user_service.addUser(
+    username,
+    fullname,
+    password,
+    image_path
+  );
+  if (response === Error.REGISTER_FAILED) {
     return res.json({
-      status: 200,
-      message: "Successfully add a user",
-    });
-  } catch (error: any) {
-    return res.json({
-      status: 500,
-      message: error.message,
+      status: 400,
+      message: Error.REGISTER_FAILED,
     });
   }
+  return res.json({
+    status: 200,
+    message: response,
+  });
 });
 
 userRouter.put("/:user_id", async (req: Request, res: Response) => {
   const { username, fullname, password, image_path } = req.body;
   const { user_id } = req.params;
   const user_service = new UserService();
-  try {
-    const response = await user_service.editUser(
-      parseInt(user_id),
-      username,
-      fullname,
-      password,
-      image_path
-    );
+  const response = await user_service.editUser(
+    parseInt(user_id),
+    username,
+    fullname,
+    password,
+    image_path
+  );
+  if (response === Error.EDIT_FAILED) {
     return res.json({
-      status: 200,
-      message: response,
-    });
-  } catch (error: any) {
-    return res.json({
-      status: 500,
-      messaeg: "Error updating user",
+      status: 400,
+      message: Error.EDIT_FAILED,
     });
   }
+  return res.json({
+    status: 200,
+    data: response,
+  });
 });
 
 userRouter.delete("/:user_id", async (req: Request, res: Response) => {
   const { user_id } = req.params;
   const user_service = new UserService();
-  try {
-    const response = await user_service.deleteUser(parseInt(user_id));
+  const response = await user_service.deleteUser(parseInt(user_id));
+  if (response === Error.DELETE_FAILED) {
     return res.json({
-      status: 200,
-      message: response,
-    });
-  } catch (error: any) {
-    res.json({
-      status: 500,
-      message: error.message,
+      status: 404,
+      message: Error.DELETE_FAILED,
     });
   }
+  return res.json({
+    status: 200,
+    message: response,
+  });
 });
 
 userRouter.get("/search", async (req: Request, res: Response) => {
@@ -103,50 +86,40 @@ userRouter.get("/search", async (req: Request, res: Response) => {
   const user_service = new UserService();
   const username_query = username ? username.toString() : "";
   const page_number = page ? parseInt(page.toString(), 10) : 1;
-  try {
-    const users = await user_service.searchUserPagination(
-      username_query,
-      page_number
-    );
-    if (users) {
-      return res.json({
-        status: 200,
-        data: users,
-      });
-    } else {
-      return res.json({
-        status: 400,
-        data: [],
-      });
-    }
-  } catch (error: any) {
+  const response = await user_service.searchUserPagination(
+    username_query,
+    page_number
+  );
+  if (response === Error.FETCH_FAILED) {
     return res.json({
-      status: 500,
-      message: error.message,
+      status: 400,
+      message: Error.FETCH_FAILED,
     });
   }
+  if (response.length === 0) {
+    return res.json({
+      status: 400,
+      message: Error.USER_NOT_FOUND,
+    });
+  }
+  return res.json({
+    status: 200,
+    data: response,
+  });
 });
 
 userRouter.get("/:user_id", async (req: Request, res: Response) => {
   const { user_id } = req.params;
   const user_service = new UserService();
-  try {
-    const response = await user_service.getUser(parseInt(user_id));
-    if (response) {
-      return res.json({
-        status: 200,
-        data: response,
-      });
-    } else {
-      return res.json({
-        status: 400,
-        data: [],
-      });
-    }
-  } catch (error: any) {
+  const response = await user_service.getUser(parseInt(user_id));
+  if (response === Error.USER_NOT_FOUND || !response) {
     return res.json({
-      status: 500,
-      message: error.message,
+      status: 400,
+      message: Error.USER_NOT_FOUND,
     });
   }
+  return res.json({
+    status: 200,
+    data: response,
+  });
 });
