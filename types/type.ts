@@ -23,3 +23,19 @@ export type CoursePremium = {
   teacher_id: number;
   release_date: Date;
 };
+
+export type User = {
+  id : number;
+  username : string;
+  fullname : string;
+  isAdmin : boolean;
+  password : string;
+  created_on : Date;
+  image_path : string | null;
+}
+
+export enum Error{
+  USER_NOT_FOUND = "Username not found!",
+  WRONG_PASSWORD = "Wrong password!",
+  LOGIN_SUCCESS = "Login success!",
+}

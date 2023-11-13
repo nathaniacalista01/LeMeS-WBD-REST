@@ -103,6 +103,28 @@ export class UserService {
     }
   }
 
+  public async getUserByUsername(username: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: {
+          username: username,
+        },
+        select: {
+          id: true,
+          username: true,
+          fullname: true,
+          isAdmin: true,
+          password: true,
+          created_on: true,
+          image_path: true,
+        },
+      });
+      return user;
+    } catch (error) {
+      
+    }
+  }
+
   public async searchUser(username: string) {
     try {
       const users = await this.prisma.user.findMany({
