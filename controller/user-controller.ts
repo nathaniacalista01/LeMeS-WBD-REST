@@ -108,6 +108,22 @@ userRouter.get("/search", async (req: Request, res: Response) => {
   });
 });
 
+userRouter.post("/username", async (req: Request, res: Response) => {
+  const { username } = req.body;
+  const user_service = new UserService();
+  const user = await user_service.getUserByUsername(username);
+  if (!user) {
+    // Mengembalikan false kalau user belum ada di database
+    return res.json({
+      result : false
+    });
+  }
+  return res.json({
+    // Mengembalikan true kalau user sudah ada di database
+    result : true,
+  });
+});
+
 userRouter.get("/:user_id", async (req: Request, res: Response) => {
   const { user_id } = req.params;
   const user_service = new UserService();
