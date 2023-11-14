@@ -41,9 +41,16 @@ export enum Error {
   FETCH_FAILED = "Failed getting data!",
   EDIT_FAILED = "Failed editing data, please check all your input!",
   DELETE_FAILED = "Failed deleting data, user not found!",
+  ADD_COURSE_FAILED = "Failed adding course, please check all your input!",
+  COURSE_NOT_FOUND = "Course not found!"
 }
 
 export enum Success {
   LOGIN_SUCCESS = "Login success!",
   REGISTER_SUCCESS = "Register success!",
+}
+
+export enum MAX_CONTENT{
+  PAGINATION_TABLE = 8,
+  PAGINATOON_PAGE = 4,
 }

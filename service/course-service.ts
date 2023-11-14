@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { DB } from "../db/db";
+import { Error, MAX_CONTENT } from "../types/type";
 
 export class CourseService {
   private prisma: PrismaClient;
@@ -13,7 +14,21 @@ export class CourseService {
       const courses = await this.prisma.coursePremium.findMany();
       return courses;
     } catch (error) {
-      throw new Error("Error getting all courses");
+      return Error.FETCH_FAILED;
+    }
+  }
+
+  public async getAllCoursePagination(page: number) {
+    const items_per_page = MAX_CONTENT.PAGINATION_TABLE;
+    const take = (page - 1) * items_per_page;
+    try {
+      const courses = await this.prisma.coursePremium.findMany({
+        take: items_per_page,
+        skip: take,
+      });
+      return courses;
+    } catch (error) {
+      return Error.FETCH_FAILED;
     }
   }
 
@@ -34,7 +49,7 @@ export class CourseService {
       });
       return response;
     } catch (error) {
-      throw new Error("Error adding courses");
+      return Error.ADD_COURSE_FAILED;
     }
   }
   public async editCourse(
@@ -58,7 +73,7 @@ export class CourseService {
       });
       return response;
     } catch (error: any) {
-      throw new Error("Error updating course");
+      return Error.EDIT_FAILED;
     }
   }
   public async deleteCourse(course_id: number) {
@@ -70,8 +85,7 @@ export class CourseService {
       });
       return response;
     } catch (error: any) {
-      console.log(error.message);
-      throw new Error("Error deleting from database");
+      return Error.DELETE_FAILED;
     }
   }
   public async getCourse(course_id: number) {
@@ -83,7 +97,7 @@ export class CourseService {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
 
@@ -98,12 +112,12 @@ export class CourseService {
       });
       return users;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
 
   public async searchCoursePagination(title: string, page: number) {
-    const items_per_page = 8;
+    const items_per_page = MAX_CONTENT.PAGINATION_TABLE;
     const skip = (page - 1) * items_per_page;
     try {
       const user = await this.prisma.coursePremium.findMany({
@@ -117,7 +131,7 @@ export class CourseService {
       });
       return user;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
 }
