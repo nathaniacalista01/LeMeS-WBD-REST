@@ -9,6 +9,7 @@ courseRouter.get("/", async (req: Request, res: Response) => {
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
   const response = await course_service.getAllCoursePagination(page_number);
+  const totalResponse = await course_service.getTotalData();
   if (response === Error.FETCH_FAILED) {
     return res.json({
       status: 400,
@@ -24,6 +25,7 @@ courseRouter.get("/", async (req: Request, res: Response) => {
   return res.json({
     status: 200,
     data: response,
+    total: totalResponse,
   });
 });
 

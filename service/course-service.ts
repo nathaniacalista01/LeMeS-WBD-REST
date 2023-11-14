@@ -100,7 +100,7 @@ export class CourseService {
       return Error.FETCH_FAILED;
     }
   }
-
+  
   public async searchCourse(title: string) {
     try {
       const users = await this.prisma.coursePremium.findMany({
@@ -131,6 +131,19 @@ export class CourseService {
       });
       return user;
     } catch (error: any) {
+      return Error.FETCH_FAILED;
+    }
+  }
+  
+  public async getTotalData(){
+    try {
+      const aggregations = await this.prisma.user.aggregate({
+        _count: {
+          id: true,
+        },
+      });
+      return aggregations._count.id;
+    } catch (error) {
       return Error.FETCH_FAILED;
     }
   }
