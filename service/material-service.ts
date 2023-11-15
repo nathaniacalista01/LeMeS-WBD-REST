@@ -88,4 +88,16 @@ export class MaterialService {
       throw new Error(error.message);
     }
   }
+  public async getMaterialsModule(module_id: number) {
+    try {
+      const materials = await this.prisma.materialPremium.findMany({
+        where: {
+          modul_id: module_id,
+        },
+      });
+      return materials;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }
