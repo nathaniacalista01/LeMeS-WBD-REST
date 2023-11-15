@@ -1,6 +1,7 @@
-import { PrismaClient } from "@prisma/client";
-import { Source } from "../types/type";
+import { MaterialPremium, PrismaClient } from "@prisma/client";
+import { Error, Source } from "../types/type";
 import { DB } from "../db/db";
+import { ModulService } from "./modul-service";
 
 export class MaterialService {
   private prisma: PrismaClient;
@@ -13,7 +14,7 @@ export class MaterialService {
       const materials = await this.prisma.materialPremium.findMany();
       return materials;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
   public async addMaterial(
@@ -35,7 +36,7 @@ export class MaterialService {
       });
       return response;
     } catch (error) {
-      throw new Error("Error adding modul");
+      return Error.ADD_MATERIAL_FAILED;
     }
   }
   public async editMaterial(
@@ -43,7 +44,7 @@ export class MaterialService {
     title: string,
     description: string,
     source_type: Source,
-    material_path: string,
+    material_path: string
   ) {
     try {
       const response = await this.prisma.materialPremium.update({
@@ -60,7 +61,7 @@ export class MaterialService {
       return response;
     } catch (error: any) {
       console.log(error.message);
-      throw new Error("Error updating course");
+      return Error.EDIT_FAILED;
     }
   }
   public async deleteMaterial(material_id: number) {
@@ -73,7 +74,7 @@ export class MaterialService {
       return response;
     } catch (error: any) {
       console.log(error.message);
-      throw new Error("Error deleting from database");
+      return Error.DELETE_FAILED;
     }
   }
   public async getMaterial(material_id: number) {
@@ -85,7 +86,35 @@ export class MaterialService {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
+    }
+  }
+
+  public async getTeacherByModulId(modul_id: number) {
+    const modul_service = new ModulService();
+    const modul = await modul_service.getTeacherByModulId(modul_id);
+    return modul;
+  }
+
+  public async getTeacherByMaterialId(material_id: number) {
+    try {
+      const material = await this.prisma.materialPremium.findUnique({
+        where: {
+          id: material_id,
+        },
+        select: {
+          modul_id: true,
+        },
+      });
+      if (material) {
+        const modul_id = material.modul_id;
+        const teacher_id = await this.getTeacherByModulId(modul_id);
+        return teacher_id;
+      } else {
+        return Error.MATERIAL_NOT_FOUND;
+      }
+    } catch (error) {
+      return Error.FETCH_FAILED;
     }
   }
 }

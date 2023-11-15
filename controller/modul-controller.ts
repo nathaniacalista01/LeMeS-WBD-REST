@@ -4,7 +4,7 @@ import { loginMiddleware } from "../middleware/login-middleware";
 import { Payload } from "../utils/payload";
 import { Error } from "../types/type";
 import { FailedResponse, SuccessResponse } from "../utils/template";
-import { validateModulTeacher } from "../utils/module-teacher";
+import { validateTeacher } from "../utils/validate-teacher";
 
 export const modulRouter = express.Router();
 
@@ -37,7 +37,7 @@ modulRouter.get("/", async (req: Request, res: Response) => {
   });
 });
 
-modulRouter.post("/", loginMiddleware, async (req: Request, res: Response) => {
+modulRouter.post("/", async (req: Request, res: Response) => {
   // Hanya bisa diakses oleh guru yang mengajar pada course itu
   const { title, description, course_id } = req.body;
   const modul_service = new ModulService();
@@ -74,7 +74,7 @@ modulRouter.put("/:modul_id", async (req: Request, res: Response) => {
   const teacher_id = await modul_service.getTeacherByModulId(
     parseInt(modul_id)
   );
-  const isValid = validateModulTeacher(payload, teacher_id);
+  const isValid = validateTeacher(payload, teacher_id);
   if (isValid) {
     return res.json(isValid);
   }
@@ -101,7 +101,7 @@ modulRouter.delete("/:modul_id", async (req: Request, res: Response) => {
     parseInt(modul_id)
   );
   const payload = new Payload().getCookie(req);
-  const notValid = validateModulTeacher(payload, teacher_id);
+  const notValid = validateTeacher(payload, teacher_id);
   if (notValid) {
     return res.json(notValid);
   }
@@ -119,16 +119,16 @@ modulRouter.get("/:modul_id", async (req: Request, res: Response) => {
     parseInt(modul_id)
   );
   const payload = new Payload().getCookie(req);
-  const notValid = validateModulTeacher(payload, teacher_id);
+  const notValid = validateTeacher(payload, teacher_id);
   if (notValid) {
     return res.json(notValid);
   }
   const response = await modul_service.getModul(parseInt(modul_id));
-  if(response === Error.FETCH_FAILED){
-    return res.json(new FailedResponse(500,Error.FETCH_FAILED))
+  if (response === Error.FETCH_FAILED) {
+    return res.json(new FailedResponse(500, Error.FETCH_FAILED));
   }
-  if(!response){
-    return res.json(new FailedResponse(400,Error.MDOULE_NOT_FOUND));
+  if (!response) {
+    return res.json(new FailedResponse(400, Error.MDOULE_NOT_FOUND));
   }
   return res.json(new SuccessResponse(response));
 });

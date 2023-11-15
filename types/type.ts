@@ -47,8 +47,9 @@ export enum Error {
   INTERNAL_ERROR = "Internal server error",
   PAGE_NOT_FOUND = "Page not found",
   ADD_MODULE_FAILED = "Failed adding module, please check all your input!",
-  MDOULE_NOT_FOUND = "Module not found!"
-
+  MDOULE_NOT_FOUND = "Module not found!",
+  ADD_MATERIAL_FAILED = "Failed adding material, please check all your input!",
+  MATERIAL_NOT_FOUND = "Material not found!",
 }
 
 export enum Success {
@@ -56,7 +57,7 @@ export enum Success {
   REGISTER_SUCCESS = "Register success!",
 }
 
-export enum MAX_CONTENT{
+export enum MAX_CONTENT {
   PAGINATION_TABLE = 4,
   PAGINATOON_PAGE = 4,
 }
