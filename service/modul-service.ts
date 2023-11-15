@@ -109,4 +109,16 @@ export class ModulService {
       return Error.FETCH_FAILED;
     }
   }
+  public async getModulsCourse(course_id: number) {
+    try {
+      const moduls = await this.prisma.modulPremium.findMany({
+        where: {
+          course_id: course_id,
+        },
+      });
+      return moduls;
+    } catch (error: any) {
+      throw new Error(error.message);
+    }
+  }
 }
