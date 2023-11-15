@@ -14,11 +14,11 @@ router.get("/", (req: Request, res: Response) => {
   res.json("hi");
 });
 
-router.use("/user",userRouter);
-router.use("/course",courseRouter);
+router.use("/user",loginMiddleware,userRouter);
+router.use("/course",loginMiddleware,courseRouter);
 router.use("/premium",adminMiddleware,premiumRouter);
-router.use("/modul",modulRouter);
-router.use("/material",materialRouter);
+router.use("/modul",loginMiddleware,modulRouter);
+router.use("/material",loginMiddleware,materialRouter);
 router.use("/auth",authRouter);
 
 export default router;

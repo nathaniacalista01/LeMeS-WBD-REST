@@ -37,21 +37,7 @@ export const loginMiddleware = (
         // console.log(err);
         return next(err);
       }
-      // Kasus kalau admin mau edit user, langsung dikasih
-      if(payload.isAdmin){
-        return next()
-      }else{
-        // Kasus kalau user mau edit user, dicek dlu, sama ga user_id params sama yang di jwt
-        if(user_id && user_id === payload.id){
-          // Kalau sama, boleh lanjut
-          return next();
-        }
-      }
-      // Kalau ga sama, return 404
-      return res.json({
-        status : 404,
-        message : Error.PAGE_NOT_FOUND
-      })
+      next();      
     });
   }
 };

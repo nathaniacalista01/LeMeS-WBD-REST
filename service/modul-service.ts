@@ -1,5 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { DB } from "../db/db";
+import { CourseService } from "./course-service";
+import { CoursePremium, Error } from "../types/type";
 
 export class ModulService {
   private prisma: PrismaClient;
@@ -12,14 +14,10 @@ export class ModulService {
       const moduls = await this.prisma.modulPremium.findMany();
       return moduls;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
     }
   }
-  public async addModul(
-    title: string,
-    description: string,
-    course_id: number,
-  ) {
+  public async addModul(title: string, description: string, course_id: number) {
     try {
       const response = await this.prisma.modulPremium.create({
         data: {
@@ -30,14 +28,10 @@ export class ModulService {
       });
       return response;
     } catch (error) {
-      throw new Error("Error adding modul");
+      return Error.ADD_MODULE_FAILED;
     }
   }
-  public async editModul(
-    modul_id: number,
-    title: string,
-    description: string,
-  ) {
+  public async editModul(modul_id: number, title: string, description: string) {
     try {
       const response = await this.prisma.modulPremium.update({
         where: {
@@ -51,7 +45,7 @@ export class ModulService {
       return response;
     } catch (error: any) {
       console.log(error.message);
-      throw new Error("Error updating course");
+      return Error.EDIT_FAILED;
     }
   }
   public async deleteModul(modul_id: number) {
@@ -63,8 +57,8 @@ export class ModulService {
       });
       return response;
     } catch (error: any) {
-      console.log(error.message);
-      throw new Error("Error deleting from database");
+      console.log("Ke catch disini")
+      return Error.DELETE_FAILED;
     }
   }
   public async getModul(modul_id: number) {
@@ -76,7 +70,43 @@ export class ModulService {
       });
       return response;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED;
+    }
+  }
+
+  public async getTeacherByCourseId(course_id: number) {
+    const course_service = new CourseService();
+    try {
+      const course = (await course_service.getCourse(
+        course_id
+      )) as CoursePremium;
+      if (course) {
+        return course.teacher_id;
+      }
+    } catch (error) {
+      return Error.FETCH_FAILED;
+    }
+  }
+
+  public async getTeacherByModulId(modul_id: number) {
+    try {
+      const modul = await this.prisma.modulPremium.findUnique({
+        where: {
+          id: modul_id,
+        },
+        select: {
+          course_id: true,
+        },
+      });
+      if (modul) {
+        const course_id = modul.course_id;
+        const teacher_id = await this.getTeacherByCourseId(course_id);
+        return teacher_id;
+      }else{
+        return Error.MDOULE_NOT_FOUND;
+      }
+    } catch (error) {
+      return Error.FETCH_FAILED;
     }
   }
 }

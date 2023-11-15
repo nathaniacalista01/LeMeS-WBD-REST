@@ -1,10 +1,19 @@
 import express, { Express, Request, Response } from "express";
 import { CourseService } from "../service/course-service";
 import { Error } from "../types/type";
+import { adminMiddleware } from "../middleware/admin-middleware";
+import { Payload } from "../utils/payload";
 
 export const courseRouter = express.Router();
 
 courseRouter.get("/", async (req: Request, res: Response) => {
+  const payload = new Payload().getCookie(req);
+  if (!payload || !payload.isAdmin) {
+    return res.json({
+      status: 401,
+      message: Error.UNAUTHORZIED_ACTION,
+    });
+  }
   const course_service = new CourseService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
@@ -28,6 +37,13 @@ courseRouter.get("/", async (req: Request, res: Response) => {
 });
 
 courseRouter.post("/", async (req: Request, res: Response) => {
+  const payload = new Payload().getCookie(req);
+  if (!payload || !payload.isAdmin) {
+    return res.json({
+      status: 401,
+      message: Error.UNAUTHORZIED_ACTION,
+    });
+  }
   const { title, description, image_path, teacher_id } = req.body;
   const courseService = new CourseService();
   const response = await courseService.addCourse(
@@ -49,6 +65,13 @@ courseRouter.post("/", async (req: Request, res: Response) => {
 });
 
 courseRouter.put("/:course_id", async (req: Request, res: Response) => {
+  const payload = new Payload().getCookie(req);
+  if (!payload || !payload.isAdmin) {
+    return res.json({
+      status: 401,
+      message: Error.UNAUTHORZIED_ACTION,
+    });
+  }
   const { course_id } = req.params;
   const { title, description, image_path, teacher_id } = req.body;
   const courseService = new CourseService();
@@ -72,6 +95,13 @@ courseRouter.put("/:course_id", async (req: Request, res: Response) => {
 });
 
 courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
+  const payload = new Payload().getCookie(req);
+  if (!payload || !payload.isAdmin) {
+    return res.json({
+      status: 401,
+      message: Error.UNAUTHORZIED_ACTION,
+    });
+  }
   const { course_id } = req.params;
   const courseService = new CourseService();
 
@@ -87,6 +117,7 @@ courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
     message: response,
   });
 });
+// Ini dipikirkan dulu mw pake ato engga, tpi jgn dihapus
 courseRouter.get("/search", async (req: Request, res: Response) => {
   const { title, page } = req.query;
   const course_service = new CourseService();
@@ -114,7 +145,9 @@ courseRouter.get("/search", async (req: Request, res: Response) => {
   });
 });
 
+// Hanya bisa diakses oleh admin atau teacher yang mengajar di course ini
 courseRouter.get("/:course_id", async (req: Request, res: Response) => {
+  const payload = new Payload().getCookie(req);
   const { course_id } = req.params;
   const courseService = new CourseService();
   const response = await courseService.getCourse(parseInt(course_id));
@@ -128,6 +161,12 @@ courseRouter.get("/:course_id", async (req: Request, res: Response) => {
     return res.json({
       status: 400,
       message: Error.COURSE_NOT_FOUND,
+    });
+  }
+  if (response.teacher_id !== payload.id && !payload.isAdmin) {
+    return res.json({
+      status: 401,
+      message: Error.UNAUTHORZIED_ACTION,
     });
   }
   return res.json({

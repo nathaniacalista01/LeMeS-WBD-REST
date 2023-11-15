@@ -19,7 +19,7 @@ export type CoursePremium = {
   id: number;
   title: string;
   description: string;
-  image_path?: string;
+  image_path: string | null;
   teacher_id: number;
   release_date: Date;
 };
@@ -45,7 +45,10 @@ export enum Error {
   COURSE_NOT_FOUND = "Course not found!",
   UNAUTHORZIED_ACTION = "Unauthorized action!",
   INTERNAL_ERROR = "Internal server error",
-  PAGE_NOT_FOUND = "Page not found"
+  PAGE_NOT_FOUND = "Page not found",
+  ADD_MODULE_FAILED = "Failed adding module, please check all your input!",
+  MDOULE_NOT_FOUND = "Module not found!"
+
 }
 
 export enum Success {
