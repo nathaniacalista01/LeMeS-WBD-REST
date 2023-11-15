@@ -2,10 +2,11 @@ import express, { Express, Request, Response } from "express";
 import { UserService } from "../service/user-service";
 import { Error, Success } from "../types/type";
 import { adminMiddleware } from "../middleware/admin-middleware";
+import { loginMiddleware } from "../middleware/login-middleware";
 
 export const userRouter = express.Router();
 
-userRouter.get("/", adminMiddleware,async (req: Request, res: Response) => {
+userRouter.get("/", adminMiddleware, async (req: Request, res: Response) => {
   const user_service = new UserService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
@@ -43,7 +44,7 @@ userRouter.post("/", async (req: Request, res: Response) => {
   });
 });
 
-userRouter.put("/:user_id", async (req: Request, res: Response) => {
+userRouter.put("/:user_id", loginMiddleware, async (req: Request, res: Response) => {
   const { username, fullname, password, image_path } = req.body;
   const { user_id } = req.params;
   const user_service = new UserService();
@@ -66,7 +67,7 @@ userRouter.put("/:user_id", async (req: Request, res: Response) => {
   });
 });
 
-userRouter.delete("/:user_id", async (req: Request, res: Response) => {
+userRouter.delete("/:user_id",adminMiddleware ,async (req: Request, res: Response) => {
   const { user_id } = req.params;
   const user_service = new UserService();
   const response = await user_service.deleteUser(parseInt(user_id));
@@ -82,7 +83,7 @@ userRouter.delete("/:user_id", async (req: Request, res: Response) => {
   });
 });
 
-userRouter.get("/search", async (req: Request, res: Response) => {
+userRouter.get("/search", adminMiddleware,async (req: Request, res: Response) => {
   const { username, page } = req.query;
   const user_service = new UserService();
   const username_query = username ? username.toString() : "";
@@ -116,16 +117,16 @@ userRouter.post("/username", async (req: Request, res: Response) => {
   if (!user) {
     // Mengembalikan false kalau user belum ada di database
     return res.json({
-      result : false
+      result: false,
     });
   }
   return res.json({
     // Mengembalikan true kalau user sudah ada di database
-    result : true,
+    result: true,
   });
 });
 
-userRouter.get("/:user_id", async (req: Request, res: Response) => {
+userRouter.get("/:user_id", loginMiddleware,async (req: Request, res: Response) => {
   const { user_id } = req.params;
   const user_service = new UserService();
   const response = await user_service.getUser(parseInt(user_id));

@@ -6,6 +6,7 @@ import { modulRouter } from "../controller/modul-controller";
 import { materialRouter } from "../controller/material-controller";
 import { authRouter } from "../controller/auth-controller";
 import { loginMiddleware } from "../middleware/login-middleware";
+import { adminMiddleware } from "../middleware/admin-middleware";
 
 const router = express.Router();
 
@@ -13,9 +14,9 @@ router.get("/", (req: Request, res: Response) => {
   res.json("hi");
 });
 
-router.use("/user",loginMiddleware,userRouter);
-router.use("/course",loginMiddleware,courseRouter);
-router.use("/premium",premiumRouter);
+router.use("/user",userRouter);
+router.use("/course",courseRouter);
+router.use("/premium",adminMiddleware,premiumRouter);
 router.use("/modul",modulRouter);
 router.use("/material",materialRouter);
 router.use("/auth",authRouter);

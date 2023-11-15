@@ -30,7 +30,6 @@ export const adminMiddleware = (
   } else {
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err: any, payload: any) => {
       if (err) {
-        console.log(err);
         return next(err);
       }
       const isAdmin = payload.isAdmin;

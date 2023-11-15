@@ -1,10 +1,11 @@
 import express, { Express, Request, Response } from "express";
 import { CourseService } from "../service/course-service";
 import { ModulService } from "../service/modul-service";
+import { loginMiddleware } from "../middleware/login-middleware";
 
 export const modulRouter = express.Router();
 
-modulRouter.get("/", async (req: Request, res: Response) => {
+modulRouter.get("/" ,async (req: Request, res: Response) => {
   const module_service = new ModulService();
   try {
     const moduls = await module_service.getAllModuls();
@@ -27,7 +28,8 @@ modulRouter.get("/", async (req: Request, res: Response) => {
   }
 });
 
-modulRouter.post("/", async (req: Request, res: Response) => {
+modulRouter.post("/", loginMiddleware, async (req: Request, res: Response) => {
+  // Memastikan hanya guru yang bisa edit middleware ini hanya Teacher dan 
   const { title, description, course_id } = req.body;
   const modulService = new ModulService();
   try {

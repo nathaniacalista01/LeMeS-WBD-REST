@@ -44,7 +44,8 @@ export enum Error {
   ADD_COURSE_FAILED = "Failed adding course, please check all your input!",
   COURSE_NOT_FOUND = "Course not found!",
   UNAUTHORZIED_ACTION = "Unauthorized action!",
-  INTERNAL_ERROR = "Internal server error"
+  INTERNAL_ERROR = "Internal server error",
+  PAGE_NOT_FOUND = "Page not found"
 }
 
 export enum Success {
