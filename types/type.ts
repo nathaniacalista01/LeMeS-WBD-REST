@@ -51,6 +51,6 @@ export enum Success {
 }
 
 export enum MAX_CONTENT{
-  PAGINATION_TABLE = 8,
+  PAGINATION_TABLE = 4,
   PAGINATOON_PAGE = 4,
 }
