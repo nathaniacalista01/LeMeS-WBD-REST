@@ -1,5 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import { MaterialService } from "../service/material-service";
+import fs from 'fs';
+import path from 'path';
 const multer = require('multer');
 
 export const materialRouter = express.Router();
@@ -12,8 +14,11 @@ const storageFile = multer.diskStorage({
     cb(null, STATIC_MATERIAL_FILE_PATH);
   },
   filename: (req: any, file: any, cb: any) => {
-    req.body.material_path = PUBLIC_MATERIAL_PATH + '/' + file.originalname;
-    cb(null, file.originalname);
+    // const uniqueCode = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const filename = file.originalname.replace(/\s/g, '');
+    // const uniqueName = uniqueCode + '-' + filename;
+    // req.body.material_path = PUBLIC_MATERIAL_PATH + '/' + uniqueName;
+    cb(null, filename);
   }
 });
 
@@ -45,6 +50,28 @@ materialRouter.get("/", async (req: Request, res: Response) => {
 materialRouter.post("/upload", upload.single('file'), async (req: Request, res: Response) => {
   // console.log(req);
   // console.log(res);
+});
+
+materialRouter.delete('/deleteFile/:filename', async (req: Request, res: Response) => {
+  const filename = req.params.filename;
+
+  // Construct the full path to the file
+  const filePath = path.join(STATIC_MATERIAL_FILE_PATH, filename);
+
+  try {
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      // Delete the file
+      fs.unlinkSync(filePath);
+      res.status(200).json({ message: 'File deleted successfully' });
+    } else {
+      // File not found
+      res.status(404).json({ message: 'File not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
 });
 
 materialRouter.post("/", async (req: Request, res: Response) => {
