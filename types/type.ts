@@ -42,7 +42,9 @@ export enum Error {
   EDIT_FAILED = "Failed editing data, please check all your input!",
   DELETE_FAILED = "Failed deleting data, user not found!",
   ADD_COURSE_FAILED = "Failed adding course, please check all your input!",
-  COURSE_NOT_FOUND = "Course not found!"
+  COURSE_NOT_FOUND = "Course not found!",
+  UNAUTHORZIED_ACTION = "Unauthorized action!",
+  INTERNAL_ERROR = "Internal server error"
 }
 
 export enum Success {
