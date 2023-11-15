@@ -13,7 +13,7 @@ router.get("/", (req: Request, res: Response) => {
   res.json("hi");
 });
 
-router.use("/user", loginMiddleware,userRouter);
+router.use("/user",loginMiddleware,userRouter);
 router.use("/course",loginMiddleware,courseRouter);
 router.use("/premium",premiumRouter);
 router.use("/modul",modulRouter);

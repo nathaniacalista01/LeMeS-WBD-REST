@@ -40,12 +40,14 @@ export class AuthService {
     username: string,
     fullname: string,
     password: string,
-    image_path?: string
+    image_path?: string,
+    isAdmin : boolean = false,
   ) {
     const result = await this.user.addUser(
       username,
       fullname,
       password,
+      isAdmin,
       image_path
     );
     return result;

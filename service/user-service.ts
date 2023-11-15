@@ -36,6 +36,7 @@ export class UserService {
     username: string,
     fullname: string,
     password: string,
+    isAdmin : boolean = false,
     image_path?: string
   ) {
     try {
@@ -46,6 +47,7 @@ export class UserService {
           fullname,
           password: hashed_password,
           image_path,
+          isAdmin
         },
       });
       return response;

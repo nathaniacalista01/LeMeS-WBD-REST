@@ -6,7 +6,6 @@ export const courseRouter = express.Router();
 
 courseRouter.get("/", async (req: Request, res: Response) => {
   const course_service = new CourseService();
-  console.log(req.headers)
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
   const response = await course_service.getAllCoursePagination(page_number);

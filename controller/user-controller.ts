@@ -1,10 +1,11 @@
 import express, { Express, Request, Response } from "express";
 import { UserService } from "../service/user-service";
 import { Error, Success } from "../types/type";
+import { adminMiddleware } from "../middleware/admin-middleware";
 
 export const userRouter = express.Router();
 
-userRouter.get("/", async (req: Request, res: Response) => {
+userRouter.get("/", adminMiddleware,async (req: Request, res: Response) => {
   const user_service = new UserService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;

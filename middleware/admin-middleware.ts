@@ -2,13 +2,12 @@ import { NextFunction, Request, Response } from "express";
 import { Error } from "../types/type";
 const jwt = require("jsonwebtoken");
 
-export const loginMiddleware = (
+export const adminMiddleware = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const cookieHeader = req.headers.cookie;
-  // console.log(req.headers.cookie)
   const cookies = cookieHeader?.split(";");
   const resultArray = cookies?.map((cookie) => {
     const [key, value] = cookie.split("=");
@@ -22,9 +21,7 @@ export const loginMiddleware = (
       message: Error.UNAUTHORZIED_ACTION,
     });
   }
-  // console.log(cookieHeader);
   const token = userObject["user"];
-  // const token = cookies[0].split("=")[1];
   if (!token) {
     return res.json({
       status: 401,
@@ -36,7 +33,14 @@ export const loginMiddleware = (
         console.log(err);
         return next(err);
       }
-      return next();
+      const isAdmin = payload.isAdmin;
+      if (isAdmin) {
+        return next();
+      }
+      return res.json({
+        status: 401,
+        message: Error.UNAUTHORZIED_ACTION,
+      });
     });
   }
 };
