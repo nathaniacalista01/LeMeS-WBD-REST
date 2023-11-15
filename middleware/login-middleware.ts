@@ -7,8 +7,6 @@ export const loginMiddleware = (
   res: Response,
   next: NextFunction
 ) => {
-  // Cek apakah ada user_id, kalau ada berarti itu request untuk edit
-  const {user_id} = req.params
   // Dapetin cookie di headers
   const cookieHeader = req.headers.cookie;
   const cookies = cookieHeader?.split(";");
@@ -16,8 +14,8 @@ export const loginMiddleware = (
     const [key, value] = cookie.split("=");
     return { [key.trim()]: value.trim() };
   });
-  const userObject = resultArray?.find((item) => "user" in item);
 
+  const userObject = resultArray?.find((item) => "user" in item);
   if (!userObject) {
     return res.json({
       status: 401,
@@ -31,13 +29,13 @@ export const loginMiddleware = (
       message: Error.UNAUTHORZIED_ACTION,
     });
   } else {
-    // Validasi JWT 
+    // Validasi JWT
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err: any, payload: any) => {
       if (err) {
         // console.log(err);
         return next(err);
       }
-      next();      
+      next();
     });
   }
 };

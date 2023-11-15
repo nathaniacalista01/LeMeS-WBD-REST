@@ -3,17 +3,12 @@ import { CourseService } from "../service/course-service";
 import { Error } from "../types/type";
 import { adminMiddleware } from "../middleware/admin-middleware";
 import { Payload } from "../utils/payload";
+import { FailedResponse, SuccessResponse } from "../utils/template";
 
 export const courseRouter = express.Router();
 
 courseRouter.get("/", async (req: Request, res: Response) => {
   const payload = new Payload().getCookie(req);
-  if (!payload || !payload.isAdmin) {
-    return res.json({
-      status: 401,
-      message: Error.UNAUTHORZIED_ACTION,
-    });
-  }
   const course_service = new CourseService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
@@ -117,6 +112,21 @@ courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
     message: response,
   });
 });
+
+courseRouter.get("/teacher",async(req : Request, res : Response)=>{
+  const payload = new Payload().getCookie(req);
+  const { page } = req.query;
+  const page_number = page ? parseInt(page.toString(), 10) : 1;  const teacher_id = payload.id;
+  const course_service = new CourseService();
+  const response = await course_service.getAllCourseByTeacher(teacher_id,page_number);
+  if(response === Error.FETCH_FAILED){
+    return res.json(new FailedResponse(500, Error.FETCH_FAILED))
+  }
+  if(!response){
+    return res.json(new FailedResponse(404, Error.COURSE_NOT_FOUND))
+  }
+  return res.json(new SuccessResponse(response));
+})
 // Ini dipikirkan dulu mw pake ato engga, tpi jgn dihapus
 courseRouter.get("/search", async (req: Request, res: Response) => {
   const { title, page } = req.query;

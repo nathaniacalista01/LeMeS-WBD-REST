@@ -32,6 +32,23 @@ export class CourseService {
     }
   }
 
+  public async getAllCourseByTeacher(teacher_id : number, page : number){
+    const items_per_page = MAX_CONTENT.PAGINATION_TABLE
+    const skip = (page-1) * items_per_page;
+    try {
+      const courses = await this.prisma.coursePremium.findMany({
+        where:{
+          teacher_id : teacher_id
+        },
+        take : items_per_page,
+        skip
+      })
+      return courses;
+    } catch (error) {
+      return Error.FETCH_FAILED;
+    }
+  }
+
   public async addCourse(
     title: string,
     description: string,
