@@ -127,13 +127,14 @@ userRouter.put(
   "/admin/:user_id",
   loginMiddleware,
   async (req: Request, res: Response) => {
-    const { username, fullname} = req.body;
+    const { username, fullname, password } = req.body;
     const { user_id } = req.params;
     const user_service = new UserService();
     const response = await user_service.editUserAdmin(
       parseInt(user_id),
       username,
       fullname,
+      password,
     );
     if (response === Error.EDIT_FAILED) {
       return res.json({

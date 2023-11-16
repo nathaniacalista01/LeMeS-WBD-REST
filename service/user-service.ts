@@ -81,8 +81,10 @@ export class UserService {
     user_id: number,
     username: string,
     fullname: string,
+    password: string,
   ) {
     try {
+      const hashed_password = await bcrypt.hash(password, 10);
       const response = await this.prisma.user.update({
         where: {
           id: user_id,
@@ -90,6 +92,7 @@ export class UserService {
         data: {
           username,
           fullname,
+          password: hashed_password,
         },
       });
       return response;
