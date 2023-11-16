@@ -50,3 +50,14 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     data: result,
   });
 });
+
+authRouter.post("/logout", async (req: Request, res: Response) => {
+  res.clearCookie("user", {
+    maxAge: 3600000,
+    httpOnly: true,
+  });
+  return res.json({
+    status: 200,
+    message: "You have been logged out!",
+  });
+});
