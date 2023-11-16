@@ -154,7 +154,7 @@ export class CourseService {
   
   public async getTotalData(){
     try {
-      const aggregations = await this.prisma.user.aggregate({
+      const aggregations = await this.prisma.coursePremium.aggregate({
         _count: {
           id: true,
         },

@@ -61,6 +61,7 @@ userRouter.get("/", adminMiddleware, async (req: Request, res: Response) => {
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
   const users = await user_service.usersPagination(page_number);
+  const totalResponse = await user_service.getTotalData();
   if (users == Error.FETCH_FAILED) {
     return res.json({
       status: 500,
@@ -70,6 +71,7 @@ userRouter.get("/", adminMiddleware, async (req: Request, res: Response) => {
   return res.json({
     status: 200,
     data: users,
+    total: totalResponse,
   });
 });
 userRouter.post(
