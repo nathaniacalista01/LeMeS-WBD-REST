@@ -122,6 +122,32 @@ userRouter.put(
     });
   }
 );
+
+userRouter.put(
+  "/admin/:user_id",
+  loginMiddleware,
+  async (req: Request, res: Response) => {
+    const { username, fullname} = req.body;
+    const { user_id } = req.params;
+    const user_service = new UserService();
+    const response = await user_service.editUserAdmin(
+      parseInt(user_id),
+      username,
+      fullname,
+    );
+    if (response === Error.EDIT_FAILED) {
+      return res.json({
+        status: 400,
+        message: Error.EDIT_FAILED,
+      });
+    }
+    return res.json({
+      status: 200,
+      data: response,
+    });
+  }
+);
+
 userRouter.delete("/image/:filename", async (req: Request, res: Response) => {
   console.log("Masuk ke delete image");
   console.log(req.params);
