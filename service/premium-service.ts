@@ -14,7 +14,7 @@ export class PremiumService {
     try {
       const response = await JSON.parse(result["_text"]);
       const data: Premium[] = response["data"];
-      console.log("ini data : ",data);
+      console.log("ini data : ", data);
       return data;
     } catch (error: any) {
       throw new Error(error.getMessage());
@@ -67,6 +67,17 @@ export class PremiumService {
       return data;
     } catch (error: any) {
       throw new Error(error.message);
+    }
+  }
+
+  public async getTotalPremium() {
+    const result = await this.soap_caller.call("getTotalPremium");
+    try {
+      const response = await JSON.parse(result["_text"]);
+      const total = parseInt(response);
+      return total;
+    } catch (error: any) {
+      return new Error(error.mesasage);
     }
   }
 }
