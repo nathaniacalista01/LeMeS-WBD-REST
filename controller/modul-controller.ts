@@ -136,23 +136,12 @@ modulRouter.get("/:modul_id", async (req: Request, res: Response) => {
 modulRouter.get("/course/:course_id", async (req: Request, res: Response) => {
   const { course_id } = req.params;
   const module_service = new ModulService();
-  try {
-    const moduls = await module_service.getModulsCourse(parseInt(course_id));
-    if (moduls) {
-      return res.json({
-        status: 200,
-        data: moduls,
-      });
-    } else {
-      return res.json({
-        status: 400,
-        data: [],
-      });
-    }
-  } catch (error) {
-    return res.json({
-      status: 500,
-      message: error,
-    });
+  const moduls = await module_service.getModulsCourse(parseInt(course_id));
+  if(moduls === Error.FETCH_FAILED){
+    return res.json(new FailedResponse(500, Error.FETCH_FAILED));
   }
+  if(!moduls){
+    return res.json(new FailedResponse(404, Error.MDOULE_NOT_FOUND))
+  }
+  return res.json(new SuccessResponse(moduls));
 });

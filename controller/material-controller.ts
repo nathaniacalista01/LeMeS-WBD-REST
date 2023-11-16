@@ -169,23 +169,12 @@ materialRouter.get("/:material_id", async (req: Request, res: Response) => {
 materialRouter.get("/module/:module_id", async (req: Request, res: Response) => {
   const { module_id } = req.params;
   const module_service = new MaterialService();
-  try {
-    const materials = await module_service.getMaterialsModule(parseInt(module_id));
-    if (materials) {
-      return res.json({
-        status: 200,
-        data: materials,
-      });
-    } else {
-      return res.json({
-        status: 400,
-        data: [],
-      });
-    }
-  } catch (error) {
-    return res.json({
-      status: 500,
-      message: error,
-    });
+  const materials = await module_service.getMaterialsModule(parseInt(module_id));
+  if(materials === Error.FETCH_FAILED){
+    return res.json(new FailedResponse(500, Error.FETCH_FAILED))
   }
+  if(!materials){
+    return res.json(new FailedResponse(404,Error.MATERIAL_NOT_FOUND))
+  }
+  return res.json(new SuccessResponse(materials));
 });

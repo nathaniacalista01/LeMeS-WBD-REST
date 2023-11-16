@@ -126,7 +126,7 @@ export class MaterialService {
       });
       return materials;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED
     }
   }
 }
