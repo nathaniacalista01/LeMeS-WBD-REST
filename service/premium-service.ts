@@ -14,7 +14,6 @@ export class PremiumService {
     try {
       const response = await JSON.parse(result["_text"]);
       const data: Premium[] = response["data"];
-      console.log("ini data : ", data);
       return data;
     } catch (error: any) {
       throw new Error(error.getMessage());
@@ -22,14 +21,17 @@ export class PremiumService {
   }
 
   public async updatePremium(data: Object) {
-    const result: any = await this.soap_caller.call(
-      "updatePremiumStatus",
-      data
-    );
     try {
+      const result: any = await this.soap_caller.call(
+        "updatePremiumStatus",
+        data
+      );
+      console.log("Ini response di BE : ",result)
       const response = result["_text"];
-      if (response !== "Not Exists") {
-        return "Sucess";
+      if(response === "Error"){
+        return "Error"
+      }else{
+        return response;
       }
     } catch (error: any) {
       throw new Error(error.getMessage());

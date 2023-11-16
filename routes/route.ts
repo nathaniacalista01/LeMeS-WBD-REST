@@ -7,14 +7,15 @@ import { materialRouter } from "../controller/material-controller";
 import { authRouter } from "../controller/auth-controller";
 import { loginMiddleware } from "../middleware/login-middleware";
 import { adminMiddleware } from "../middleware/admin-middleware";
+import { checkAPI } from "../middleware/api-middleware";
 
 const router = express.Router();
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", checkAPI,(req: Request, res: Response) => {
   res.json("hi");
 });
 
-router.use("/user",loginMiddleware,userRouter);
+router.use("/user",userRouter);
 router.use("/course",loginMiddleware,courseRouter);
 router.use("/premium",adminMiddleware,premiumRouter);
 router.use("/modul",loginMiddleware,modulRouter);
