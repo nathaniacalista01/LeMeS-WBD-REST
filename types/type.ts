@@ -50,7 +50,8 @@ export enum Error {
   MDOULE_NOT_FOUND = "Module not found!",
   ADD_MATERIAL_FAILED = "Failed adding material, please check all your input!",
   MATERIAL_NOT_FOUND = "Material not found!",
-  REQUEST_NOT_FOUND = "Request not found!"
+  REQUEST_NOT_FOUND = "Request not found!",
+  API_KEY_WRONG = "API Key Wrong",
 }
 
 export enum Success {

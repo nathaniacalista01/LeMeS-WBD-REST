@@ -15,7 +15,7 @@ export default class SoapCaller {
   public async call(method: string, params?: Object) {
     const headers = {
       "Content-Type": "text/xml",
-      "X-API-KEY" : process.env.SOAP_API_KEY ? process.env.SOAP_API_KEY : "resttosoap",
+      "X-API-KEY" : process.env.SOAP_API_KEY ? process.env.SOAP_API_KEY : "RestApp",
     };
     const xml = this.buildXMLRequest(method, params);
     const response = await fetch(this.url, {
