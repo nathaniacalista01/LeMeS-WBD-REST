@@ -11,7 +11,7 @@ import path from "path";
 export const userRouter = express.Router();
 const multer = require("multer");
 const STATIC_PROFPIC_PATH = "public/profile-image";
-const PUBLIC_PROFPIC_PATH = process.env.APP_BASE_URL + "/profpic";
+const PUBLIC_PROFPIC_PATH = process.env.APP_BASE_URL + "/profile-image";
 
 const storageFile = multer.diskStorage({
   destination: (req: any, file: any, cb: any) => {
@@ -101,13 +101,14 @@ userRouter.put(
   "/admin/:user_id",
   loginMiddleware,
   async (req: Request, res: Response) => {
-    const { username, fullname } = req.body;
+    const { username, fullname, password } = req.body;
     const { user_id } = req.params;
     const user_service = new UserService();
     const response = await user_service.editUserAdmin(
       parseInt(user_id),
       username,
-      fullname
+      fullname,
+      password,
     );
     if (response === Error.EDIT_FAILED) {
       return res.json({
