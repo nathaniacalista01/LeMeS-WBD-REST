@@ -118,7 +118,7 @@ export class ModulService {
       });
       return moduls;
     } catch (error: any) {
-      throw new Error(error.message);
+      return Error.FETCH_FAILED
     }
   }
 }

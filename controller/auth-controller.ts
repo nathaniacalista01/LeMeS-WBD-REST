@@ -50,7 +50,6 @@ authRouter.post("/register", async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 authRouter.post("/logout", async (req: Request, res: Response) => {
   res.clearCookie("user", {
     maxAge: 3600000,
