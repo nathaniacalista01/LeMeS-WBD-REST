@@ -21,7 +21,7 @@ premiumRouter.get("/", async (req: Request, res: Response) => {
   const premium_service = new PremiumService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
-  const limit = 5;
+  const limit = 6;
   const data = {
     page: page_number,
     limit,
@@ -105,11 +105,8 @@ premiumRouter.put("/:user_id", async (req: Request, res: Response) => {
   const premium_service = new PremiumService();
   try {
     const status = await premium_service.updatePremium(data);
-    if (status) {
-      res.json({
-        status: 400,
-        message: "User not found",
-      });
+    if (status === "Error" || status === "Not Exists") {
+      res.json(new FailedResponse(404,Error.USER_NOT_FOUND))
     } else {
       res.json({
         status: 200,
@@ -117,10 +114,7 @@ premiumRouter.put("/:user_id", async (req: Request, res: Response) => {
       });
     }
   } catch (error) {
-    res.json({
-      status: 500,
-      message: "Error",
-    });
+    return res.json(new FailedResponse(500, Error.INTERNAL_ERROR));
   }
 });
 
@@ -139,15 +133,9 @@ premiumRouter.delete("/:user_id", async (req: Request, res: Response) => {
         message: "Successfully deleted a request",
       });
     } else {
-      res.json({
-        status: 400,
-        message: "User not found",
-      });
+      return res.json(new FailedResponse(400,Error.FETCH_FAILED));
     }
   } catch (error) {
-    res.json({
-      status: 500,
-      message: "Internal server error",
-    });
+    return res.json(new FailedResponse(500, Error.INTERNAL_ERROR));
   }
 });

@@ -15,16 +15,15 @@ export default class SoapCaller {
   public async call(method: string, params?: Object) {
     const headers = {
       "Content-Type": "text/xml",
+      "X-API-KEY" : process.env.SOAP_API_KEY ? process.env.SOAP_API_KEY : "RestApp",
     };
     const xml = this.buildXMLRequest(method, params);
-    console.log("Ini xml request : ", xml);
     const response = await fetch(this.url, {
       headers: headers,
       method: "POST",
       body: xml,
     });
     const text: string = await response.text();
-    console.log("Ini text : ", text);
     const result = this.parseXML(text, method);
     return result;
   }
@@ -56,10 +55,6 @@ export default class SoapCaller {
     );
     const returnVal =
       json["S:Envelope"]["S:Body"]["ns2:" + method + "Response"]["return"];
-
-    // const temp = JSON.parse(returnVal);
-    // console.log("Ini temp : ", temp);
-    // console.log("Ini return val", returnVal);
     if (!returnVal) {
       return null;
     }
