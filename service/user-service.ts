@@ -11,7 +11,7 @@ export class UserService {
   }
 
   public async usersPagination(page: number) {
-    const items_per_page = 8;
+    const items_per_page = 6;
     const skip = (page - 1) * items_per_page;
     try {
       const users = await this.prisma.user.findMany({
@@ -159,6 +159,19 @@ export class UserService {
       });
       return user;
     } catch (error: any) {
+      return Error.FETCH_FAILED;
+    }
+  }
+
+  public async getTotalData(){
+    try {
+      const aggregations = await this.prisma.user.aggregate({
+        _count: {
+          id: true,
+        },
+      });
+      return aggregations._count.id;
+    } catch (error) {
       return Error.FETCH_FAILED;
     }
   }
