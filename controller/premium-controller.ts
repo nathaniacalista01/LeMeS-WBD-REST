@@ -6,12 +6,22 @@ import { FailedResponse, SuccessResponse } from "../utils/template";
 
 export const premiumRouter = express.Router();
 
+premiumRouter.get("/total",async(req : Request, res : Response)=>{
+  const premium_service = new PremiumService();
+  try {
+    const total = await premium_service.getTotalPremium();
+    return res.json(new SuccessResponse(total))
+  } catch (error) {
+    return res.json(new FailedResponse(500,Error.INTERNAL_ERROR));
+  }
+})
+
 premiumRouter.get("/", async (req: Request, res: Response) => {
   // Service yang digunakan untuk mendapatkan seluruh premium request
   const premium_service = new PremiumService();
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
-  const limit = 8;
+  const limit = 5;
   const data = {
     page: page_number,
     limit,
@@ -20,12 +30,14 @@ premiumRouter.get("/", async (req: Request, res: Response) => {
     const result: Premium[] | undefined = await premium_service.getAllPremium(
       data
     );
+    const totalData = await premium_service.getTotalPremium();
     if (!result || result.length === 0) {
       return res.json(new FailedResponse(404, Error.REQUEST_NOT_FOUND));
     } else {
       return res.json(new SuccessResponse(result))
     }
   } catch (error) {
+    console.log(error);
     return res.json(new FailedResponse(500, Error.INTERNAL_ERROR));
   }
 });
