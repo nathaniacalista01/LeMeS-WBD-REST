@@ -58,7 +58,6 @@ premiumRouter.get("/search", async (req: Request, res: Response) => {
       message: response,
     });
   } catch (error) {
-    // console.log(error);
     res.json({
       status: 500,
       message: "Error",

@@ -19,11 +19,13 @@ class App {
         }
       },
     };
+
     this.server = express();
     this.server.use(cors(corsOptions));
     this.server.use(express.json());
+    this.server.use(express.static("public"));
+    this.server.use(express.static("files"));
     this.server.use("/api", router);
-    this.server.use(express.static('public'));
   }
   public run() {
     this.server.listen(8000, () => {

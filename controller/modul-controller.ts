@@ -115,14 +115,14 @@ modulRouter.delete("/:modul_id", async (req: Request, res: Response) => {
 modulRouter.get("/:modul_id", async (req: Request, res: Response) => {
   const { modul_id } = req.params;
   const modul_service = new ModulService();
-  const teacher_id = await modul_service.getTeacherByModulId(
-    parseInt(modul_id)
-  );
-  const payload = new Payload().getCookie(req);
-  const notValid = validateTeacher(payload, teacher_id);
-  if (notValid) {
-    return res.json(notValid);
-  }
+  // const teacher_id = await modul_service.getTeacherByModulId(
+  //   parseInt(modul_id)
+  // );
+  // const payload = new Payload().getCookie(req);
+  // const notValid = validateTeacher(payload, teacher_id);
+  // if (notValid) {
+  //   return res.json(notValid);
+  // }
   const response = await modul_service.getModul(parseInt(modul_id));
   if (response === Error.FETCH_FAILED) {
     return res.json(new FailedResponse(500, Error.FETCH_FAILED));

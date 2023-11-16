@@ -7,6 +7,15 @@ import { FailedResponse, SuccessResponse } from "../utils/template";
 
 export const courseRouter = express.Router();
 
+courseRouter.get("/total", async (req: Request, res: Response) => {
+  const course_service = new CourseService();
+  const response = await course_service.getTotalData();
+  if (response === Error.FETCH_FAILED) {
+    return res.json(new FailedResponse(500, Error.FETCH_FAILED));
+  }
+  return res.json(new SuccessResponse(response));
+});
+
 courseRouter.get("/", async (req: Request, res: Response) => {
   const payload = new Payload().getCookie(req);
   const course_service = new CourseService();
@@ -115,20 +124,28 @@ courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
   });
 });
 
-courseRouter.get("/teacher",async(req : Request, res : Response)=>{
-  const payload = new Payload().getCookie(req);
+courseRouter.get("/teacher", async (req: Request, res: Response) => {
   const { page } = req.query;
-  const page_number = page ? parseInt(page.toString(), 10) : 1;  const teacher_id = payload.id;
-  const course_service = new CourseService();
-  const response = await course_service.getAllCourseByTeacher(teacher_id,page_number);
-  if(response === Error.FETCH_FAILED){
-    return res.json(new FailedResponse(500, Error.FETCH_FAILED))
+  const page_number = page ? parseInt(page.toString(), 10) : 1;
+  try {
+    const payload = new Payload().getCookie(req);
+    const teacher_id = payload.id;
+    const course_service = new CourseService();
+    const response = await course_service.getAllCourseByTeacher(
+      teacher_id,
+      page_number
+    );
+    if (response === Error.FETCH_FAILED) {
+      return res.json(new FailedResponse(500, Error.FETCH_FAILED));
+    }
+    if (!response) {
+      return res.json(new FailedResponse(404, Error.COURSE_NOT_FOUND));
+    }
+    return res.json(new SuccessResponse(response));
+  } catch (error) {
+    return res.json(new FailedResponse(500, Error.INTERNAL_ERROR))
   }
-  if(!response){
-    return res.json(new FailedResponse(404, Error.COURSE_NOT_FOUND))
-  }
-  return res.json(new SuccessResponse(response));
-})
+});
 // Ini dipikirkan dulu mw pake ato engga, tpi jgn dihapus
 courseRouter.get("/search", async (req: Request, res: Response) => {
   const { title, page } = req.query;
@@ -159,7 +176,7 @@ courseRouter.get("/search", async (req: Request, res: Response) => {
 
 // Hanya bisa diakses oleh admin atau teacher yang mengajar di course ini
 courseRouter.get("/:course_id", async (req: Request, res: Response) => {
-  const payload = new Payload().getCookie(req);
+  // const payload = new Payload().getCookie(req);
   const { course_id } = req.params;
   const courseService = new CourseService();
   const response = await courseService.getCourse(parseInt(course_id));
@@ -175,12 +192,12 @@ courseRouter.get("/:course_id", async (req: Request, res: Response) => {
       message: Error.COURSE_NOT_FOUND,
     });
   }
-  if (response.teacher_id !== payload.id && !payload.isAdmin) {
-    return res.json({
-      status: 401,
-      message: Error.UNAUTHORZIED_ACTION,
-    });
-  }
+  // if (response.teacher_id !== payload.id && !payload.isAdmin) {
+  //   return res.json({
+  //     status: 401,
+  //     message: Error.UNAUTHORZIED_ACTION,
+  //   });
+  // }
   return res.json({
     status: 200,
     data: response,

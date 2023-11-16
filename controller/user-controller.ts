@@ -123,8 +123,6 @@ userRouter.put(
 );
 
 userRouter.delete("/image/:filename", async (req: Request, res: Response) => {
-  console.log("Masuk ke delete image");
-  console.log(req.params);
   const filename = req.params.filename;
   const filePath = path.join(STATIC_PROFPIC_PATH, filename);
 
@@ -220,7 +218,6 @@ userRouter.get(
   loginMiddleware,
   async (req: Request, res: Response) => {
     const payload = new Payload().getCookie(req);
-    console.log(payload);
     const isAdmin = payload.isAdmin;
     return res.json(new SuccessResponse(isAdmin));
   }

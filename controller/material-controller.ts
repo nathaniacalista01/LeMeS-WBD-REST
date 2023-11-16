@@ -47,8 +47,7 @@ materialRouter.get("/", async (req: Request, res: Response) => {
 });
 
 materialRouter.post("/upload", upload.single('file'), async (req: Request, res: Response) => {
-  // console.log(req);
-  // console.log(res);
+
 });
 
 materialRouter.delete('/deleteFile/:filename', async (req: Request, res: Response) => {
@@ -75,7 +74,6 @@ materialRouter.delete('/deleteFile/:filename', async (req: Request, res: Respons
 
 materialRouter.post("/", async (req: Request, res: Response) => {
   const { title, description, source_type, material_path, modul_id } = req.body;
-  console.log(req.body);
   const material_service = new MaterialService();
 
   // Cocokin teacher_id yang punya material sama yang sekarang sedang login

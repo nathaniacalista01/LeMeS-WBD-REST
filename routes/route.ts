@@ -16,10 +16,10 @@ router.get("/", checkAPI,(req: Request, res: Response) => {
 });
 
 router.use("/user",userRouter);
-router.use("/course",loginMiddleware,courseRouter);
+router.use("/course",courseRouter);
 router.use("/premium",adminMiddleware,premiumRouter);
-router.use("/modul",loginMiddleware,modulRouter);
-router.use("/material",loginMiddleware,materialRouter);
+router.use("/modul",modulRouter);
+router.use("/material",materialRouter);
 router.use("/auth",authRouter);
 
 export default router;

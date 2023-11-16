@@ -43,7 +43,6 @@ const seedCourse = async () => {
         },
       });
     } catch (error: any) {
-      console.log(randomTeacherId);
       console.log(error.message);
     }
   }
