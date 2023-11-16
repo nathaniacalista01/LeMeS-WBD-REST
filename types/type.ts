@@ -57,7 +57,7 @@ export enum Success {
   REGISTER_SUCCESS = "Register success!",
 }
 
-export enum MAX_CONTENT {
+export enum MAX_CONTENT{
   PAGINATION_TABLE = 4,
   PAGINATOON_PAGE = 4,
 }
