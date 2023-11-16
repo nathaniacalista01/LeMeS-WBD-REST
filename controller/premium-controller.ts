@@ -1,32 +1,32 @@
 import express, { Express, Request, Response } from "express";
-import { Premium } from "../types/type";
+import { Error, Premium } from "../types/type";
 import SoapCaller from "../utils/soap-caller";
 import { PremiumService } from "../service/premium-service";
+import { FailedResponse, SuccessResponse } from "../utils/template";
 
 export const premiumRouter = express.Router();
 
 premiumRouter.get("/", async (req: Request, res: Response) => {
   // Service yang digunakan untuk mendapatkan seluruh premium request
   const premium_service = new PremiumService();
+  const { page } = req.query;
+  const page_number = page ? parseInt(page.toString(), 10) : 1;
+  const limit = 8;
+  const data = {
+    page: page_number,
+    limit,
+  };
   try {
-    const data: Premium[] | undefined = await premium_service.getAllPremium();
-    if (!data) {
-      res.json({
-        status: 400,
-        message: "No premium found",
-      });
+    const result: Premium[] | undefined = await premium_service.getAllPremium(
+      data
+    );
+    if (!result || result.length === 0) {
+      return res.json(new FailedResponse(404, Error.REQUEST_NOT_FOUND));
     } else {
-      res.json({
-        status: 200,
-        message: "Success",
-        data,
-      });
+      return res.json(new SuccessResponse(result))
     }
   } catch (error) {
-    res.json({
-      status: 500,
-      message: "Error",
-    });
+    return res.json(new FailedResponse(500, Error.INTERNAL_ERROR));
   }
 });
 

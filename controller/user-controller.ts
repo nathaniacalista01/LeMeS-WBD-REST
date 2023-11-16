@@ -1,17 +1,16 @@
 import express, { Express, Request, Response } from "express";
 import { UserService } from "../service/user-service";
-import { Error, Success } from "../types/type";
+import { Error, Success, User } from "../types/type";
 import { adminMiddleware } from "../middleware/admin-middleware";
 import { loginMiddleware } from "../middleware/login-middleware";
 import { FailedResponse, SuccessResponse } from "../utils/template";
 import { Payload } from "../utils/payload";
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
 
 export const userRouter = express.Router();
-
-const multer = require('multer');
-const STATIC_PROFPIC_PATH = 'public/profpic';
+const multer = require("multer");
+const STATIC_PROFPIC_PATH =  "public/profile-image";
 const PUBLIC_PROFPIC_PATH = process.env.APP_BASE_URL + '/profpic';
 
 const storageFile = multer.diskStorage({
@@ -19,13 +18,13 @@ const storageFile = multer.diskStorage({
     cb(null, STATIC_PROFPIC_PATH);
   },
   filename: (req: any, file: any, cb: any) => {
-    // const uniqueCode = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const filename = file.originalname.replace(/\s/g, '');
-    // const uniqueName = uniqueCode + '-' + filename;
-    // req.body.profpic_path = PUBLIC_PROFPIC_PATH + '/' + uniqueName;
+    const filename = file.originalname.replace(/\s/g, "");
     cb(null, filename);
-  }
+  },
 });
+
+
+
 
 const upload = multer({ storage: storageFile });
 
@@ -75,6 +74,13 @@ userRouter.get("/", adminMiddleware, async (req: Request, res: Response) => {
     total: totalResponse,
   });
 });
+userRouter.post(
+  "/image",
+  upload.single("file"),
+  async (req: Request, res: Response) => {
+    console.log("Masuk ke user sini");
+  }
+);
 
 userRouter.post("/", async (req: Request, res: Response) => {
   const user_service = new UserService();
@@ -95,14 +101,13 @@ userRouter.put(
   "/:user_id",
   loginMiddleware,
   async (req: Request, res: Response) => {
-    const { username, fullname, password, image_path } = req.body;
+    const { username, fullname, image_path } = req.body;
     const { user_id } = req.params;
     const user_service = new UserService();
     const response = await user_service.editUser(
       parseInt(user_id),
       username,
       fullname,
-      password,
       image_path
     );
     if (response === Error.EDIT_FAILED) {
@@ -117,7 +122,26 @@ userRouter.put(
     });
   }
 );
+userRouter.delete("/image/:filename", async (req: Request, res: Response) => {
+  console.log("Masuk ke delete image");
+  console.log(req.params);
+  const filename = req.params.filename;
+  const filePath = path.join(STATIC_PROFPIC_PATH, filename);
 
+  try {
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      // Delete the file
+      fs.unlinkSync(filePath);
+      res.status(200).json({ message: "File deleted successfully" });
+    } else {
+      // File not found
+      res.status(404).json({ message: "File not found" });
+    }
+  } catch (error) {
+    return res.json(new FailedResponse(500, Error.DELETE_FAILED));
+  }
+});
 userRouter.delete(
   "/:user_id",
   adminMiddleware,
@@ -172,12 +196,18 @@ userRouter.get(
 userRouter.post("/username", async (req: Request, res: Response) => {
   const { username } = req.body;
   const user_service = new UserService();
+  const payload = new Payload().getCookie(req);
   const user = await user_service.getUserByUsername(username);
-  if (!user) {
+  if (!user || user === Error.USER_NOT_FOUND) {
     // Mengembalikan false kalau user belum ada di database
     return res.json({
       result: false,
     });
+  } else {
+    const { id } = user;
+    if (id === payload.id) {
+      return res.json({ result: false });
+    }
   }
   return res.json({
     // Mengembalikan true kalau user sudah ada di database
@@ -187,9 +217,27 @@ userRouter.post("/username", async (req: Request, res: Response) => {
 
 userRouter.get("/isAdmin", async (req: Request, res: Response) => {
   const payload = new Payload().getCookie(req);
-  console.log(payload)
+  console.log(payload);
   const isAdmin = payload.isAdmin;
   return res.json(new SuccessResponse(isAdmin));
+});
+
+userRouter.get("/profile", async (req: Request, res: Response) => {
+  const payload = new Payload().getCookie(req);
+  const user_id = payload.id;
+  const user_service = new UserService();
+  const user = await user_service.getUser(user_id);
+
+  if (user === Error.USER_NOT_FOUND || !user) {
+    return res.json(new FailedResponse(404, Error.USER_NOT_FOUND));
+  }
+  const profile = {
+    id: user.id,
+    fullname: user.fullname,
+    username: user.username,
+    image_path: user.image_path,
+  };
+  return res.json(new SuccessResponse(profile));
 });
 
 userRouter.get("/:user_id", async (req: Request, res: Response) => {
