@@ -29,10 +29,7 @@ userRouter.post(
   "/upload",
   loginMiddleware,
   upload.single("picture"),
-  async (req: Request, res: Response) => {
-    // console.log(req);
-    // console.log(res);
-  }
+  async (req: Request, res: Response) => {}
 );
 
 userRouter.get("/", adminMiddleware, async (req: Request, res: Response) => {
@@ -57,9 +54,7 @@ userRouter.post(
   "/image",
   loginMiddleware,
   upload.single("file"),
-  async (req: Request, res: Response) => {
-
-  }
+  async (req: Request, res: Response) => {}
 );
 
 userRouter.post("/", async (req: Request, res: Response) => {
@@ -102,7 +97,32 @@ userRouter.put(
     });
   }
 );
-userRouter.delete("/image/:filename",loginMiddleware, async (req: Request, res: Response) => {
+userRouter.put(
+  "/admin/:user_id",
+  loginMiddleware,
+  async (req: Request, res: Response) => {
+    const { username, fullname } = req.body;
+    const { user_id } = req.params;
+    const user_service = new UserService();
+    const response = await user_service.editUserAdmin(
+      parseInt(user_id),
+      username,
+      fullname
+    );
+    if (response === Error.EDIT_FAILED) {
+      return res.json({
+        status: 400,
+        message: Error.EDIT_FAILED,
+      });
+    }
+    return res.json({
+      status: 200,
+      data: response,
+    });
+  }
+);
+
+userRouter.delete("/image/:filename", async (req: Request, res: Response) => {
   console.log("Masuk ke delete image");
   console.log(req.params);
   const filename = req.params.filename;
@@ -195,43 +215,55 @@ userRouter.post("/username", async (req: Request, res: Response) => {
   });
 });
 
-userRouter.get("/isAdmin", loginMiddleware,async (req: Request, res: Response) => {
-  const payload = new Payload().getCookie(req);
-  console.log(payload);
-  const isAdmin = payload.isAdmin;
-  return res.json(new SuccessResponse(isAdmin));
-});
-
-userRouter.get("/profile",loginMiddleware, async (req: Request, res: Response) => {
-  const payload = new Payload().getCookie(req);
-  const user_id = payload.id;
-  const user_service = new UserService();
-  const user = await user_service.getUser(user_id);
-
-  if (user === Error.USER_NOT_FOUND || !user) {
-    return res.json(new FailedResponse(404, Error.USER_NOT_FOUND));
+userRouter.get(
+  "/isAdmin",
+  loginMiddleware,
+  async (req: Request, res: Response) => {
+    const payload = new Payload().getCookie(req);
+    console.log(payload);
+    const isAdmin = payload.isAdmin;
+    return res.json(new SuccessResponse(isAdmin));
   }
-  const profile = {
-    id: user.id,
-    fullname: user.fullname,
-    username: user.username,
-    image_path: user.image_path,
-  };
-  return res.json(new SuccessResponse(profile));
-});
+);
 
-userRouter.get("/:user_id", loginMiddleware,async (req: Request, res: Response) => {
-  const { user_id } = req.params;
-  const user_service = new UserService();
-  const response = await user_service.getUser(parseInt(user_id));
-  if (response === Error.USER_NOT_FOUND || !response) {
+userRouter.get(
+  "/profile",
+  loginMiddleware,
+  async (req: Request, res: Response) => {
+    const payload = new Payload().getCookie(req);
+    const user_id = payload.id;
+    const user_service = new UserService();
+    const user = await user_service.getUser(user_id);
+
+    if (user === Error.USER_NOT_FOUND || !user) {
+      return res.json(new FailedResponse(404, Error.USER_NOT_FOUND));
+    }
+    const profile = {
+      id: user.id,
+      fullname: user.fullname,
+      username: user.username,
+      image_path: user.image_path,
+    };
+    return res.json(new SuccessResponse(profile));
+  }
+);
+
+userRouter.get(
+  "/:user_id",
+  loginMiddleware,
+  async (req: Request, res: Response) => {
+    const { user_id } = req.params;
+    const user_service = new UserService();
+    const response = await user_service.getUser(parseInt(user_id));
+    if (response === Error.USER_NOT_FOUND || !response) {
+      return res.json({
+        status: 400,
+        message: Error.USER_NOT_FOUND,
+      });
+    }
     return res.json({
-      status: 400,
-      message: Error.USER_NOT_FOUND,
+      status: 200,
+      data: response,
     });
   }
-  return res.json({
-    status: 200,
-    data: response,
-  });
-});
+);

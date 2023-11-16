@@ -77,6 +77,26 @@ export class UserService {
       return Error.EDIT_FAILED;
     }
   }
+  public async editUserAdmin(
+    user_id: number,
+    username: string,
+    fullname: string,
+  ) {
+    try {
+      const response = await this.prisma.user.update({
+        where: {
+          id: user_id,
+        },
+        data: {
+          username,
+          fullname,
+        },
+      });
+      return response;
+    } catch (error) {
+      return Error.EDIT_FAILED;
+    }
+  }
 
   public async deleteUser(user_id: number) {
     try {
