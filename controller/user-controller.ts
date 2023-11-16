@@ -5,8 +5,57 @@ import { adminMiddleware } from "../middleware/admin-middleware";
 import { loginMiddleware } from "../middleware/login-middleware";
 import { FailedResponse, SuccessResponse } from "../utils/template";
 import { Payload } from "../utils/payload";
+import fs from 'fs';
+import path from 'path';
 
 export const userRouter = express.Router();
+
+const multer = require('multer');
+const STATIC_PROFPIC_PATH = 'public/profpic';
+const PUBLIC_PROFPIC_PATH = process.env.APP_BASE_URL + '/profpic';
+
+const storageFile = multer.diskStorage({
+  destination: (req: any, file: any, cb: any) => {
+    cb(null, STATIC_PROFPIC_PATH);
+  },
+  filename: (req: any, file: any, cb: any) => {
+    // const uniqueCode = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    const filename = file.originalname.replace(/\s/g, '');
+    // const uniqueName = uniqueCode + '-' + filename;
+    // req.body.profpic_path = PUBLIC_PROFPIC_PATH + '/' + uniqueName;
+    cb(null, filename);
+  }
+});
+
+const upload = multer({ storage: storageFile });
+
+userRouter.post("/upload", upload.single('picture'), async (req: Request, res: Response) => {
+  // console.log(req);
+  // console.log(res);
+});
+
+userRouter.delete('/deleteProfpic/:filename', async (req: Request, res: Response) => {
+  const filename = req.params.filename;
+
+  // Construct the full path to the file
+  const filePath = path.join(STATIC_PROFPIC_PATH, filename);
+
+  try {
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      // Delete the file
+      fs.unlinkSync(filePath);
+      res.status(200).json({ message: 'File deleted successfully' });
+    } else {
+      // File not found
+      res.status(404).json({ message: 'File not found' });
+    }
+  } catch (error) {
+    console.error('Error deleting file:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 userRouter.get("/", adminMiddleware, async (req: Request, res: Response) => {
   const user_service = new UserService();

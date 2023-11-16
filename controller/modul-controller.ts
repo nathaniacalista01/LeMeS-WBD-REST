@@ -123,7 +123,7 @@ modulRouter.get("/:modul_id", async (req: Request, res: Response) => {
   if (notValid) {
     return res.json(notValid);
   }
-  const response = await modul_service.getModul(parseInt(modul_isd));
+  const response = await modul_service.getModul(parseInt(modul_id));
   if (response === Error.FETCH_FAILED) {
     return res.json(new FailedResponse(500, Error.FETCH_FAILED));
   }
