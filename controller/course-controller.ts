@@ -4,8 +4,53 @@ import { Error } from "../types/type";
 import { adminMiddleware } from "../middleware/admin-middleware";
 import { Payload } from "../utils/payload";
 import { FailedResponse, SuccessResponse } from "../utils/template";
+import fs from "fs";
+import path from "path";
 
 export const courseRouter = express.Router();
+const multer = require("multer");
+const STATIC_COURSE_IMAGE_PATH = "public/course-image";
+const PUBLIC_COURSE_IMAGE_PATH = process.env.APP_BASE_URL + "/course-image";
+
+const storageFile = multer.diskStorage({
+  destination: (req: any, file: any, cb: any) => {
+    cb(null, STATIC_COURSE_IMAGE_PATH);
+  },
+  filename: (req: any, file: any, cb: any) => {
+    const filename = file.originalname.replace(/\s/g, "");
+    cb(null, filename);
+  },
+});
+
+const upload = multer({ storage: storageFile });
+
+courseRouter.post(
+  "/image",
+  adminMiddleware,
+  upload.single("file"),
+  async (req: Request, res: Response) => {}
+);
+
+courseRouter.delete("/image/:filename", async (req: Request, res: Response) => {
+  console.log("Masuk ke delete image");
+  console.log(req.params);
+  const filename = req.params.filename;
+  const filePath = path.join(STATIC_COURSE_IMAGE_PATH, filename);
+
+  try {
+    // Check if the file exists
+    if (fs.existsSync(filePath)) {
+      // Delete the file
+      fs.unlinkSync(filePath);
+      res.status(200).json({ message: "File deleted successfully" });
+    } else {
+      // File not found
+      res.status(404).json({ message: "File not found" });
+    }
+  } catch (error) {
+    return res.json(new FailedResponse(500, Error.DELETE_FAILED));
+  }
+});
 
 courseRouter.get("/", async (req: Request, res: Response) => {
   const payload = new Payload().getCookie(req);

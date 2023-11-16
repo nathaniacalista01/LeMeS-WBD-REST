@@ -11,7 +11,7 @@ import path from "path";
 export const userRouter = express.Router();
 const multer = require("multer");
 const STATIC_PROFPIC_PATH = "public/profile-image";
-const PUBLIC_PROFPIC_PATH = process.env.APP_BASE_URL + "/profpic";
+const PUBLIC_PROFPIC_PATH = process.env.APP_BASE_URL + "/profile-image";
 
 const storageFile = multer.diskStorage({
   destination: (req: any, file: any, cb: any) => {
