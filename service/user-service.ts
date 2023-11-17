@@ -145,6 +145,7 @@ export class UserService {
       });
       return user;
     } catch (error) {
+      console.log("Error di sini");
       return Error.USER_NOT_FOUND;
     }
   }

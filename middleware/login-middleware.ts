@@ -32,6 +32,7 @@ export const loginMiddleware = (
     // Validasi JWT
     jwt.verify(token, process.env.JWT_SECRET_KEY, (err: any, payload: any) => {
       if (err) {
+        console.log("Errorrrrr");
         // console.log(err);
         return next(err);
       }

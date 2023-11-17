@@ -108,7 +108,7 @@ userRouter.put(
       parseInt(user_id),
       username,
       fullname,
-      password,
+      password
     );
     if (response === Error.EDIT_FAILED) {
       return res.json({
@@ -203,15 +203,15 @@ userRouter.post("/username", async (req: Request, res: Response) => {
       result: false,
     });
   } else {
-    const { id } = user;
-    if (id === payload.id) {
-      return res.json({ result: false });
+    try {
+      if (user.id === payload.id) {
+        return res.json({ result: false });
+      }
+    } catch (error) {
+      return res.json({ result: true });
     }
+    return res.json({ result: true });
   }
-  return res.json({
-    // Mengembalikan true kalau user sudah ada di database
-    result: true,
-  });
 });
 
 userRouter.get(

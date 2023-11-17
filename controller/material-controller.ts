@@ -206,10 +206,8 @@ materialRouter.get(
       parseInt(module_id)
     );
     if(req.headers["x-api-key"] === "ReactApp"){
-      console.log("Masuk ke sini");
       const payload = new Payload().getCookie(req);
       const teacher = await module_service.getTeacherByModulId(parseInt(module_id));
-      console.log(teacher);
       if(teacher !== payload.id){
         return res.json(new FailedResponse(401,Error.UNAUTHORZIED_ACTION));
       }
