@@ -64,7 +64,7 @@ courseRouter.get("/total", checkAPI, async (req: Request, res: Response) => {
   return res.json(new SuccessResponse(response));
 });
 
-courseRouter.get("/", adminMiddleware,async (req: Request, res: Response) => {
+courseRouter.get("/",async (req: Request, res: Response) => {
   // Bisa mendapatkan seluruh course dan hanya bisa diakses admin
   const payload = new Payload().getCookie(req);
   const course_service = new CourseService();

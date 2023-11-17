@@ -19,7 +19,7 @@ export class CourseService {
   }
 
   public async getAllCoursePagination(page: number) {
-    const items_per_page = 6; // nyamain sama yg users krena dipakenya di tabel
+    const items_per_page = 4; // nyamain sama yg users krena dipakenya di tabel
     const take = (page - 1) * items_per_page;
     try {
       const courses = await this.prisma.coursePremium.findMany({
