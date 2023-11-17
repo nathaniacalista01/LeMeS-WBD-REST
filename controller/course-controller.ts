@@ -6,6 +6,7 @@ import { Payload } from "../utils/payload";
 import { FailedResponse, SuccessResponse } from "../utils/template";
 import fs from "fs";
 import path from "path";
+import { checkAPI } from "../middleware/api-middleware";
 
 export const courseRouter = express.Router();
 const multer = require("multer");
@@ -31,28 +32,30 @@ courseRouter.post(
   async (req: Request, res: Response) => {}
 );
 
-courseRouter.delete("/image/:filename", async (req: Request, res: Response) => {
-  console.log("Masuk ke delete image");
-  console.log(req.params);
-  const filename = req.params.filename;
-  const filePath = path.join(STATIC_COURSE_IMAGE_PATH, filename);
+courseRouter.delete(
+  "/image/:filename",
+  adminMiddleware,
+  async (req: Request, res: Response) => {
+    const filename = req.params.filename;
+    const filePath = path.join(STATIC_COURSE_IMAGE_PATH, filename);
 
-  try {
-    // Check if the file exists
-    if (fs.existsSync(filePath)) {
-      // Delete the file
-      fs.unlinkSync(filePath);
-      res.status(200).json({ message: "File deleted successfully" });
-    } else {
-      // File not found
-      res.status(404).json({ message: "File not found" });
+    try {
+      // Check if the file exists
+      if (fs.existsSync(filePath)) {
+        // Delete the file
+        fs.unlinkSync(filePath);
+        res.status(200).json({ message: "File deleted successfully" });
+      } else {
+        // File not found
+        res.status(404).json({ message: "File not found" });
+      }
+    } catch (error) {
+      return res.json(new FailedResponse(500, Error.DELETE_FAILED));
     }
-  } catch (error) {
-    return res.json(new FailedResponse(500, Error.DELETE_FAILED));
   }
-});
+);
 
-courseRouter.get("/total", async (req: Request, res: Response) => {
+courseRouter.get("/total", checkAPI, async (req: Request, res: Response) => {
   const course_service = new CourseService();
   const response = await course_service.getTotalData();
   if (response === Error.FETCH_FAILED) {
@@ -61,7 +64,8 @@ courseRouter.get("/total", async (req: Request, res: Response) => {
   return res.json(new SuccessResponse(response));
 });
 
-courseRouter.get("/", async (req: Request, res: Response) => {
+courseRouter.get("/", adminMiddleware,async (req: Request, res: Response) => {
+  // Bisa mendapatkan seluruh course dan hanya bisa diakses admin
   const payload = new Payload().getCookie(req);
   const course_service = new CourseService();
   const { page } = req.query;
@@ -87,7 +91,7 @@ courseRouter.get("/", async (req: Request, res: Response) => {
   });
 });
 
-courseRouter.post("/", async (req: Request, res: Response) => {
+courseRouter.post("/",adminMiddleware, async (req: Request, res: Response) => {
   const payload = new Payload().getCookie(req);
   if (!payload || !payload.isAdmin) {
     return res.json({
@@ -115,7 +119,8 @@ courseRouter.post("/", async (req: Request, res: Response) => {
   });
 });
 
-courseRouter.put("/:course_id", async (req: Request, res: Response) => {
+courseRouter.put("/:course_id",adminMiddleware, async (req: Request, res: Response) => {
+  // Update course hanya bisa dilakukan oleh admin
   const payload = new Payload().getCookie(req);
   if (!payload || !payload.isAdmin) {
     return res.json({
@@ -145,7 +150,8 @@ courseRouter.put("/:course_id", async (req: Request, res: Response) => {
   });
 });
 
-courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
+courseRouter.delete("/:course_id", adminMiddleware,async (req: Request, res: Response) => {
+  // Menghapus course hanya dapat dilakuakn oleh admin
   const payload = new Payload().getCookie(req);
   if (!payload || !payload.isAdmin) {
     return res.json({
@@ -169,7 +175,8 @@ courseRouter.delete("/:course_id", async (req: Request, res: Response) => {
   });
 });
 
-courseRouter.get("/teacher", async (req: Request, res: Response) => {
+courseRouter.get("/teacher", checkAPI, async (req: Request, res: Response) => {
+  // Mendapatkan seluruh course yang diajar
   const { page } = req.query;
   const page_number = page ? parseInt(page.toString(), 10) : 1;
   try {
@@ -188,7 +195,7 @@ courseRouter.get("/teacher", async (req: Request, res: Response) => {
     }
     return res.json(new SuccessResponse(response));
   } catch (error) {
-    return res.json(new FailedResponse(500, Error.INTERNAL_ERROR))
+    return res.json(new FailedResponse(500, Error.INTERNAL_ERROR));
   }
 });
 // Ini dipikirkan dulu mw pake ato engga, tpi jgn dihapus
@@ -220,31 +227,38 @@ courseRouter.get("/search", async (req: Request, res: Response) => {
 });
 
 // Hanya bisa diakses oleh admin atau teacher yang mengajar di course ini
-courseRouter.get("/:course_id", async (req: Request, res: Response) => {
-  // const payload = new Payload().getCookie(req);
-  const { course_id } = req.params;
-  const courseService = new CourseService();
-  const response = await courseService.getCourse(parseInt(course_id));
-  if (response === Error.FETCH_FAILED) {
+courseRouter.get(
+  "/:course_id",
+  checkAPI,
+  async (req: Request, res: Response) => {
+    // const payload = new Payload().getCookie(req);
+    const { course_id } = req.params;
+    const courseService = new CourseService();
+    const response = await courseService.getCourse(parseInt(course_id));
+    if (response === Error.FETCH_FAILED) {
+      return res.json({
+        status: 500,
+        message: Error.FETCH_FAILED,
+      });
+    }
+    if (!response) {
+      return res.json({
+        status: 400,
+        message: Error.COURSE_NOT_FOUND,
+      });
+    }
+    if (req.headers["X-API-KEY"] === process.env.REACT_API_KEY) {
+      const payload = new Payload().getCookie(req);
+      if (response.teacher_id !== payload.id && !payload.isAdmin) {
+        return res.json({
+          status: 401,
+          message: Error.UNAUTHORZIED_ACTION,
+        });
+      }
+    }
     return res.json({
-      status: 500,
-      message: Error.FETCH_FAILED,
+      status: 200,
+      data: response,
     });
   }
-  if (!response) {
-    return res.json({
-      status: 400,
-      message: Error.COURSE_NOT_FOUND,
-    });
-  }
-  // if (response.teacher_id !== payload.id && !payload.isAdmin) {
-  //   return res.json({
-  //     status: 401,
-  //     message: Error.UNAUTHORZIED_ACTION,
-  //   });
-  // }
-  return res.json({
-    status: 200,
-    data: response,
-  });
-});
+);
